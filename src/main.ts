@@ -10,9 +10,9 @@ ls.create('cats', { name: "Puffy", age: 1 });
 const id = generateId();
 const car = new Car(id, "golf", "VW");
 
-(function initializeContent() {
-    [...(document.getElementsByClassName('editor') as HTMLCollectionOf<HTMLElement>)].slice(1).forEach(form => form.style.display = "none")
-}())
+// (function initializeContent() {
+//     [...(document.getElementsByClassName('editor') as HTMLCollectionOf<HTMLElement>)].slice(1).forEach(form => form.style.display = "none")
+// }())
 document.getElementsByClassName("action new")[0].addEventListener('click', function (e) {
     const keys = Object.keys(new Car("a", "b", "c")).filter(key => key !== "id");
     const html = FormView(keys);
