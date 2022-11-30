@@ -6,7 +6,9 @@ export class Editor {
         private callback: (data: object) => any,
         private propNames: string[]) {
         this.form.addEventListener('submit', this.onSubmit.bind(this));
-
+        this.form.addEventListener('reset', (e) => { this.form.style.display = "none";
+        (this.form.previousElementSibling as HTMLButtonElement).style.display = "block";
+     })
     }
     private onSubmit(event: SubmitEvent) {
         event.preventDefault();
