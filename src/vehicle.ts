@@ -1,3 +1,11 @@
+export interface IVehicle {
+    rentalPrice: number;
+    rentedTo: string | null;
+    id: string;
+    make: string;
+    model: string;
+}
+
 export abstract class Vehicle {
     rentalPrice: number;
     rentedTo: string | null;
@@ -15,11 +23,15 @@ export enum Transmissions {
 export enum CargoTypes {
     "box", "flatbed", "van"
 }
-interface CarParams {
+export interface CarParams {
     bodyType: BodyTypes;
     numberOfSeats: number;
     transmission: Transmissions;
 }
+export interface ICar extends IVehicle, CarParams{
+     
+}
+
 export class Car extends Vehicle {
     bodyType: BodyTypes;
     numberOfSeats: number;
