@@ -14,9 +14,6 @@ export class Editor {
         event.preventDefault();
         const formData = new FormData(this.form);
         const bodyType = formData.get('bodyType');
-        console.log([...formData.keys()]);
-        console.log([...formData.values()]);
-        console.log(this.propNames);
         const data = Object.fromEntries(this.propNames.map(n => [n, formData.get(n)]));
         this.callback(data);
     }
