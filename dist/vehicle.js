@@ -29,14 +29,13 @@ export var CargoTypes;
     CargoTypes[CargoTypes["flatbed"] = 1] = "flatbed";
     CargoTypes[CargoTypes["van"] = 2] = "van";
 })(CargoTypes || (CargoTypes = {}));
-class Car extends Vehicle {
+export class Car extends Vehicle {
     id;
     make;
     model;
     bodyType;
     numberOfSeats;
     transmission;
-    //constructor(public make: string, public model: string)
     constructor(id, make, model, carParams) {
         super(id, make, model);
         this.id = id;
@@ -57,7 +56,7 @@ class Car extends Vehicle {
         }
     }
 }
-class Truck extends Vehicle {
+export class Truck extends Vehicle {
     id;
     make;
     model;

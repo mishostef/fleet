@@ -8,7 +8,8 @@ module.exports = {
         vehicle: './src/vehicle.ts',
         main: './src/main.ts',
         utils: './src/utils.ts',
-        Storage: './src/Storage.ts'
+        Storage: './src/Storage.ts',
+        cars: './src/cars.ts'
     },
     module: {
         rules: [

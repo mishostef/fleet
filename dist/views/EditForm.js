@@ -1,7 +1,6 @@
 import { span, input, label, select, option, button, form, div } from "../dom/dom";
 import { BodyTypes, Transmissions } from "../vehicle";
-
-export function FormView(keys, mode: boolean = false) {
+export function FormView(keys, mode = false) {
     const fields = keys.map(key => {
         if (key === "bodyType") {
             const values = Object.keys(BodyTypes).filter(x => isNaN(Number(x)));
@@ -21,8 +20,9 @@ export function FormView(keys, mode: boolean = false) {
         const currentInput = input({ type: "text", name: key });
         return label({}, currentSpan, currentInput);
     });
-    const submitBtn = button({ className: "action confirm", type: "submit", id: "create" }, "Add Car");
+    const editBtn = button({ className: "action confirm", type: "submit", id: "edit" }, "Save Car");
     const cancelBtn = button({ className: "action cancel", type: "reset" }, "Cancel");
-    const buttonWrapperDiv = div({}, submitBtn, cancelBtn);
-    return form({ className: "align", id: "create" }, ...fields, buttonWrapperDiv)
+    const buttonWrapperDiv = div({}, editBtn, cancelBtn);
+    return form({ className: "align", id: "create" }, ...fields, buttonWrapperDiv);
 }
+//# sourceMappingURL=EditForm.js.map
