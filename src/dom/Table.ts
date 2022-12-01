@@ -1,7 +1,7 @@
 export class Table {
     private records: any[] = [];
     private rows: Map<object, HTMLTableRowElement> = new Map();
-
+    public activatedRow: HTMLTableRowElement = null;
     constructor(
         public element: HTMLTableElement,
         private createRow: (record: any) => HTMLTableRowElement,
@@ -13,6 +13,20 @@ export class Table {
             this.records = records;
         }
         this.records.forEach(this.add.bind(this));
+        this.element.addEventListener('click', (e) => {///added delete functionality
+            if (e.target instanceof HTMLButtonElement) {
+                if (e.target.textContent === "Delete")
+                    this.activatedRow = e.target.parentElement.parentElement as HTMLTableRowElement;
+                console.log(this.activatedRow);
+                const rowIndex = this.activatedRow.rowIndex - 1;
+                const deleteRow = this.records[rowIndex];
+                const id = deleteRow["id"];
+                console.log("id=", id);
+                if (confirm(`Are you sure you want to delete ${id}`)) {
+                    this.remove(id);
+                }
+            }
+        })
     }
 
     add(record: any) {
@@ -48,7 +62,7 @@ export class Table {
         // Update record in collection
         this.records.splice(index, 1, newRecord);
     }
-    
+
     remove(id: any) {
         const record = this.get(id);
         const index = this.records.findIndex(r => r == record);
