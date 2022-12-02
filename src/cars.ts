@@ -7,38 +7,54 @@ import { EditForm } from "./views/EditForm";
 import { getLocation } from "./utils";
 import { Table } from "./dom/Table";
 import { tr, td, span, button } from "./dom/dom";
+
+let editId = null;
+
 const ls = new LocalStorage();
 
-const id = generateId();
-const car = new Car(id, "golf", "VW");
-
 let isEditing = false;
-document.getElementsByClassName("action new")[0].addEventListener('click', function (e) {
+
+const actionButton =document.getElementsByClassName("action new")[0] as HTMLButtonElement;
+
+initialize();
+
+actionButton.addEventListener('click', function (e) {
+    const createForm = document.getElementById("create") as HTMLFormElement;
+   (e.target as HTMLButtonElement).style.display = "none";
+    const editForm = document.getElementById("edit") as HTMLFormElement;
+   toggleForms(editForm, createForm);
+
+   document.addEventListener('click', (e) => {
+       listenForTableclick(e);
+   })
+});
+
+function initialize(){
     const keys = Object.keys(new Car("a", "b", "c")).filter(key => key !== "id");
     const { newEditor, html } = getEditor(keys, FormView, 1);
     newEditor.appendChild(html)
     const createForm = document.getElementById("create") as HTMLFormElement;
     createForm.style.background = "red";
-    let editor = new Editor(createForm, onSubmit, keys);
-    (e.target as HTMLButtonElement).style.display = "none";
+    let editor = new Editor(createForm, onSubmit, keys,actionButton); 
 
-    document.addEventListener('click', (e) => {
-        listenForTableclick(e);
-    })
     const { newEditor: updateEditor, html: html2 } = getEditor(keys, EditForm, 2)
     const reference = document.querySelector('main') as HTMLElement;
     updateEditor.insertBefore(html2, reference);
     const editForm = document.getElementById("edit") as HTMLFormElement;
     editForm.style.background = "yellow";
-    editor = new Editor(editForm, onSubmit, keys);
-    toggleForms(editForm, createForm);
-});
+    editor = new Editor(editForm, onEdit, keys,actionButton);
+    [...(document.querySelectorAll('.editor form') as NodeListOf<HTMLElement>)].forEach(el=>el.style.display="none");
+}
 
 const table = document.getElementsByTagName('table')[0];
-console.log(table);
 const tableManager = new Table(table, createCarRow, identify);
-tableManager.add(car)
 
+hidrate(tableManager);
+
+async function hidrate(tableManager: Table) {
+    const cars = await ls.getAll('cars');
+    cars.forEach(car => tableManager.add(car));
+}
 
 function getEditor(keys: string[], view, index) {
     const html = view(keys);
@@ -64,14 +80,13 @@ function listenForTableclick(e: MouseEvent) {
         if (btnText == "Edit") {
             isEditing = true;
             const activatedRow = (e.target as HTMLElement).parentElement.parentElement as HTMLTableRowElement;
+            editId = activatedRow.children[0].textContent;
             const keys = ["make", "model", "bodyType", "numberOfSeats", "transmission", "rentalPrice"];
             const record = getTableRecord(activatedRow, keys);
-
             const createForm = document.getElementById("create") as HTMLFormElement;
             const editForm = document.getElementById("edit") as HTMLFormElement;
             keys.forEach(key => editForm[key].value = record[key]);
             toggleForms(editForm, createForm);
-
         }
     }
 }
@@ -117,5 +132,20 @@ async function onSubmit(data) {
     data.id = generateId();
     alert(JSON.stringify(data));
     const type = getLocation();
-    ls.create(type, new Car(data.id, data.make, data.model));
+    try {
+        ls.create(type, new Car(data.id, data.make, data.model));
+    } catch (error) {
+        alert(error);
+    }
+}
+
+async function onEdit(data) {
+    alert('in Edit...')
+    try {
+        await ls.update('cars', editId, data);
+        const newRecord =await ls.getById('cars',editId);
+        tableManager.replace(editId,newRecord);
+    } catch (error) {
+        alert(error)
+    }   
 }
