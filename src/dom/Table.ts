@@ -17,7 +17,6 @@ export class Table {
             if (e.target instanceof HTMLButtonElement) {
                 if (e.target.textContent === "Delete") {
                     const activatedRow = e.target.parentElement.parentElement as HTMLTableRowElement;
-                    console.log(activatedRow);
                     const rowIndex = activatedRow.rowIndex - 1;
                     const deleteRow = this.records[rowIndex];
                     const id = deleteRow["id"];
@@ -52,11 +51,20 @@ export class Table {
     replace(id: any, newRecord: any) {
         const record = this.get(id);
         const index = this.records.findIndex(r => r == record);
-        const row = this.getRow(id);
+        //const row = this.getRow(id);
+        const rowIndex = [...this.rows.keys()]////
+        const r = [...this.rows.keys()].findIndex(x => x['id'] = id);
+        const row = this.element.childNodes.item(r+1)///this.rows.get(r);
 
+        //console.log('htmlRow=',row);
+        console.log(rowIndex)
+        console.log('r=', r)
+        //const rr = this.rows.get(rowIndex);
         // Update row in DOM and collection
-        const newRow = this.createRow(newRecord);
+        const f=this.createRow.bind(this);
+        const newRow = f(newRecord);
         row.replaceWith(newRow);
+        this.element.replaceChild(newRow,this.element.childNodes.item(r+1));
         this.rows.set(record, newRow);
 
         // Update record in collection

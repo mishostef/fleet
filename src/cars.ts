@@ -14,36 +14,36 @@ const ls = new LocalStorage();
 
 let isEditing = false;
 
-const actionButton =document.getElementsByClassName("action new")[0] as HTMLButtonElement;
+const actionButton = document.getElementsByClassName("action new")[0] as HTMLButtonElement;
 
 initialize();
 
 actionButton.addEventListener('click', function (e) {
     const createForm = document.getElementById("create") as HTMLFormElement;
-   (e.target as HTMLButtonElement).style.display = "none";
+    (e.target as HTMLButtonElement).style.display = "none";
     const editForm = document.getElementById("edit") as HTMLFormElement;
-   toggleForms(editForm, createForm);
+    toggleForms(editForm, createForm);
 
-   document.addEventListener('click', (e) => {
-       listenForTableclick(e);
-   })
+
 });
-
-function initialize(){
+document.addEventListener('click', (e) => {
+    listenForTableclick(e);
+});
+function initialize() {
     const keys = Object.keys(new Car("a", "b", "c")).filter(key => key !== "id");
     const { newEditor, html } = getEditor(keys, FormView, 1);
     newEditor.appendChild(html)
     const createForm = document.getElementById("create") as HTMLFormElement;
     createForm.style.background = "red";
-    let editor = new Editor(createForm, onSubmit, keys,actionButton); 
+    let editor = new Editor(createForm, onSubmit, keys, actionButton);
 
     const { newEditor: updateEditor, html: html2 } = getEditor(keys, EditForm, 2)
     const reference = document.querySelector('main') as HTMLElement;
     updateEditor.insertBefore(html2, reference);
     const editForm = document.getElementById("edit") as HTMLFormElement;
     editForm.style.background = "yellow";
-    editor = new Editor(editForm, onEdit, keys,actionButton);
-    [...(document.querySelectorAll('.editor form') as NodeListOf<HTMLElement>)].forEach(el=>el.style.display="none");
+    let e2 = new Editor(editForm, onEdit, keys, actionButton);
+    [...(document.querySelectorAll('.editor form') as NodeListOf<HTMLElement>)].forEach(el => el.style.display = "none");
 }
 
 const table = document.getElementsByTagName('table')[0];
@@ -142,10 +142,10 @@ async function onSubmit(data) {
 async function onEdit(data) {
     alert('in Edit...')
     try {
+        const newRecord ={...await ls.getById('cars', editId),...data};
+        tableManager.replace(editId, newRecord);
         await ls.update('cars', editId, data);
-        const newRecord =await ls.getById('cars',editId);
-        tableManager.replace(editId,newRecord);
     } catch (error) {
         alert(error)
-    }   
+    }
 }
