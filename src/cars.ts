@@ -1,5 +1,5 @@
 import { LocalStorage } from "./Storage";
-import { BodyTypes, Car, IVehicle } from "./vehicle";
+import { BodyTypes, Car, IVehicle, Transmissions } from "./vehicle";
 import { generateId } from "./utils";
 import { Editor } from "./dom/Editor";
 import { FormView } from "./views/FormView";
@@ -77,18 +77,32 @@ function listenForTableclick(e: MouseEvent) {
     const target = e.target;
     if (target instanceof HTMLButtonElement) {
         const btnText = target.textContent;
-        if (btnText == "Edit") {
-            isEditing = true;
-            const activatedRow = (e.target as HTMLElement).parentElement.parentElement as HTMLTableRowElement;
-            editId = activatedRow.children[0].textContent;
-            const keys = ["make", "model", "bodyType", "numberOfSeats", "transmission", "rentalPrice"];
-            const record = getTableRecord(activatedRow, keys);
-            const createForm = document.getElementById("create") as HTMLFormElement;
-            const editForm = document.getElementById("edit") as HTMLFormElement;
-            keys.forEach(key => editForm[key].value = record[key]);
-            toggleForms(editForm, createForm);
+        if (btnText == "Edit" || btnText == "Delete") {
+            if (btnText == "Edit") {
+                isEditing = true;
+                const activatedRow = (e.target as HTMLElement).parentElement.parentElement as HTMLTableRowElement;
+                editId = activatedRow.children[0].textContent;
+                const keys = ["make", "model", "bodyType", "numberOfSeats", "transmission", "rentalPrice"];
+                const record = getTableRecord(activatedRow, keys);
+                const createForm = document.getElementById("create") as HTMLFormElement;
+                const editForm = document.getElementById("edit") as HTMLFormElement;
+                setFormValues(keys, editForm, record);
+                toggleForms(editForm, createForm);
+            } else if (btnText == "Delete") {
+                ls.delete('cars', editId);
+            }
         }
     }
+}
+
+function setFormValues(keys: string[], editForm: HTMLFormElement, record: {}) {
+    keys.forEach(key => {
+        if (key === "bodyType" || key === "transmission") {
+            const selectItems = key === "bodyType" ? BodyTypes : Transmissions;
+            (editForm[key] as HTMLSelectElement).selectedIndex = selectItems[key];
+        }
+        editForm[key].value = record[key];
+    });
 }
 
 function getTableRecord(activatedRow: HTMLTableRowElement, keys: string[]) {
@@ -120,7 +134,7 @@ function createCarRow(car: Car) {
         td({}, car.model),
         td({}, BodyTypes[car.bodyType]),
         td({}, car.numberOfSeats.toString()),
-        td({}, car.transmission.toString()),
+        td({}, Transmissions[car.transmission]),
         td({}, `$${car.rentalPrice.toString()}/day`),
         td({}, button({ className: "action edit" }, 'Edit'), button({ className: "action delete" }, 'Delete'))
     );
@@ -142,7 +156,9 @@ async function onSubmit(data) {
 async function onEdit(data) {
     alert('in Edit...')
     try {
-        const newRecord ={...await ls.getById('cars', editId),...data};
+        data["bodyType"] = BodyTypes[data["bodyType"]];
+        data["transmission"] = Transmissions[data["transmission"]];
+        const newRecord = { ...await ls.getById('cars', editId), ...data };
         tableManager.replace(editId, newRecord);
         await ls.update('cars', editId, data);
     } catch (error) {

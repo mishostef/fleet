@@ -50,21 +50,13 @@ export class Table {
 
     replace(id: any, newRecord: any) {
         const record = this.get(id);
-        const index = this.records.findIndex(r => r == record);
-        //const row = this.getRow(id);
-        const rowIndex = [...this.rows.keys()]////
-        const r = [...this.rows.keys()].findIndex(x => x['id'] = id);
-        const row = this.element.childNodes.item(r+1)///this.rows.get(r);
-
-        //console.log('htmlRow=',row);
-        console.log(rowIndex)
-        console.log('r=', r)
-        //const rr = this.rows.get(rowIndex);
+        //const index = this.records.findIndex(r => r == record);
+        const index = [...this.rows.keys()].findIndex(x => x['id'] = id);
         // Update row in DOM and collection
-        const f=this.createRow.bind(this);
+        const f = this.createRow.bind(this);
         const newRow = f(newRecord);
-        row.replaceWith(newRow);
-        this.element.replaceChild(newRow,this.element.childNodes.item(r+1));
+        // row.replaceWith(newRow);
+        this.element.replaceChild(newRow, this.element.childNodes.item(index + 1));
         this.rows.set(record, newRow);
 
         // Update record in collection

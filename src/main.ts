@@ -7,7 +7,6 @@ import { getLocation } from "./utils";
 import { Table } from "./dom/Table";
 import { tr, td, span, button } from "./dom/dom";
 const ls = new LocalStorage();
-ls.create('cats', { name: "Puffy", age: 1 });
 const id = generateId();
 const car = new Car(id, "golf", "VW");
 
