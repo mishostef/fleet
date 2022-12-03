@@ -86,7 +86,7 @@ function listenForTableclick(e: MouseEvent) {
                 isEditing = true;
                 const activatedRow = (e.target as HTMLElement).parentElement.parentElement as HTMLTableRowElement;
                 editId = activatedRow.children[0].textContent;
-                const keys = ["make", "model", "cargo", "capacity", "rentalPrice", "control",];
+                const keys = ["make", "model", "cargoType", "capacity", "rentalPrice", "control",];
                 const record = getTableRecord(activatedRow, keys);
                 const createForm = document.getElementById("create") as HTMLFormElement;
                 const editForm = document.getElementById("edit") as HTMLFormElement;
@@ -113,24 +113,25 @@ export function getEnum(): any {
 function setFormValues(keys: string[], editForm: HTMLFormElement, record: {}) {
     const enums = getEnum();
     keys.forEach(key => {
-        // enums.forEach(e => {
-        //     if (key === e) {
-        //         const selectItems = e;
-        //         if (editForm[e.key] as HTMLSelectElement).selectedIndex = e[e.key]
-        //     }
-        // })
-        editForm[key].value = record[key];
+        enums.forEach(en => {
+            const enumKey = Object.keys(en)[0];
+            console.log(key);
+            const enumVals = Object.values(en[enumKey]).filter(v => isNaN(Number(v)));
+            console.log(enumVals)
+            if (key === enumKey) {
+                const selectItems = enumVals;
+                (editForm[key] as HTMLSelectElement).selectedIndex = selectItems[key]
+            }
+        });
+        try {
+            editForm[key].value = record[key];
+        } catch (error) {
+            console.log(`in catch key=${key} editform[key]=${editForm[key]} record=${record}`)
+        }
+
     });
 }
 
-
-// keys.forEach(key => {
-//     if (key === "bodyType" || key === "transmission") {
-//         const selectItems = key === "bodyType" ? BodyTypes : Transmissions;
-//         (editForm[key] as HTMLSelectElement).selectedIndex = selectItems[key];
-//     }
-//     editForm[key].value = record[key];
-// });
 function getTableRecord(activatedRow: HTMLTableRowElement, keys: string[]) {
     return [...activatedRow.children].slice(1).reduce((a, b, index) => {
         const key = keys[index];
