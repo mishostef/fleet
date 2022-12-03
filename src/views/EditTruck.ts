@@ -1,8 +1,7 @@
 import { span, input, label, select, option, button, form, div } from "../dom/dom";
 import { getEnum } from "../trucks";
 
-
-export function CreateTruck(keys) {
+export function EditTruck(keys) {
     const enums = getEnum();
     console.log(enums);
 
@@ -26,8 +25,11 @@ export function CreateTruck(keys) {
         const currentInput = input({ type: "text", name: key });
         return label({}, currentSpan, currentInput);
     });
-    const submitBtn = button({ className: "action confirm", type: "submit", id: "create" }, "Add Car");
+    const editBtn = button({ className: "action confirm", type: "submit", id: "edit" }, "Save Car");
     const cancelBtn = button({ className: "action cancel", type: "reset" }, "Cancel");
-    const buttonWrapperDiv = div({}, submitBtn, cancelBtn);
-    return form({ className: "align", id: "create" }, ...fields, buttonWrapperDiv)
+    const buttonWrapperDiv = div({}, editBtn, cancelBtn);
+    return form({ className: "align", id: "edit" }, ...fields, buttonWrapperDiv)
 }
+
+
+

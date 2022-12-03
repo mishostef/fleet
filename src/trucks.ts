@@ -3,7 +3,7 @@ import { BodyTypes, Car, CargoTypes, IVehicle, Transmissions, Truck, Vehicle } f
 import { generateId } from "./utils";
 import { Editor } from "./dom/Editor";
 import { CreateTruck } from "./views/CreateTruck";
-import { EditForm } from "./views/EditForm";
+import { EditTruck } from "./views/EditTruck"
 import { getLocation } from "./utils";
 import { Table } from "./dom/Table";
 import { tr, td, span, button } from "./dom/dom";
@@ -40,7 +40,7 @@ function initialize(className) {
     createForm.style.background = "red";
     let editor = new Editor(createForm, onSubmit, keys, actionButton);
 
-    const { newEditor: updateEditor, html: html2 } = getEditor(keys, EditForm, 2)
+    const { newEditor: updateEditor, html: html2 } = getEditor(keys, EditTruck, 2)
     const reference = document.querySelector('main') as HTMLElement;
     updateEditor.appendChild(html2)//insertBefore(html2, reference);
     const editForm = document.getElementById("edit") as HTMLFormElement;
@@ -86,7 +86,7 @@ function listenForTableclick(e: MouseEvent) {
                 isEditing = true;
                 const activatedRow = (e.target as HTMLElement).parentElement.parentElement as HTMLTableRowElement;
                 editId = activatedRow.children[0].textContent;
-                const keys = ["make", "model", "cargoType", "capacity", "rentalPrice", "control",];
+                const keys = ["make", "model", "cargoType", "capacity", "rentalPrice"];
                 const record = getTableRecord(activatedRow, keys);
                 const createForm = document.getElementById("create") as HTMLFormElement;
                 const editForm = document.getElementById("edit") as HTMLFormElement;
@@ -115,7 +115,6 @@ function setFormValues(keys: string[], editForm: HTMLFormElement, record: {}) {
     keys.forEach(key => {
         enums.forEach(en => {
             const enumKey = Object.keys(en)[0];
-            console.log(key);
             const enumVals = Object.values(en[enumKey]).filter(v => isNaN(Number(v)));
             console.log(enumVals)
             if (key === enumKey) {
@@ -123,12 +122,7 @@ function setFormValues(keys: string[], editForm: HTMLFormElement, record: {}) {
                 (editForm[key] as HTMLSelectElement).selectedIndex = selectItems[key]
             }
         });
-        try {
-            editForm[key].value = record[key];
-        } catch (error) {
-            console.log(`in catch key=${key} editform[key]=${editForm[key]} record=${record}`)
-        }
-
+        editForm[key].value = record[key];
     });
 }
 
@@ -186,12 +180,13 @@ async function onSubmit(data) {
 
 async function onEdit(data) {
     alert('in Edit...')
+    const collectionName = getLocation();
     try {
         data["bodyType"] = BodyTypes[data["bodyType"]];
         data["transmission"] = Transmissions[data["transmission"]];
-        const newRecord = { ...await ls.getById('cars', editId), ...data };
+        const newRecord = { ...await ls.getById(collectionName, editId), ...data };
         tableManager.replace(editId, newRecord);
-        await ls.update('cars', editId, data);
+        await ls.update(collectionName, editId, data);
     } catch (error) {
         alert(error)
     }
