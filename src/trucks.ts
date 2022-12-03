@@ -31,7 +31,8 @@ document.addEventListener('click', (e) => {
 
 function initialize(className) {
     ///to replace with bottle
-    const Class = className === "car" ? new Car("a", "b", "c") : new Truck("a", "b", "c");
+    const vehicleType = getLocation().slice(0, -1);
+    const Class = getClass(vehicleType, { id: "a", model: "b", make: "c" })//className === "car" ? new Car("a", "b", "c") : new Truck("a", "b", "c");
     const keys = Object.keys(Class).filter(key => key !== "id");
     const { newEditor, html } = getEditor(keys, CreateTruck, 1);
     newEditor.appendChild(html)
@@ -99,11 +100,12 @@ function listenForTableclick(e: MouseEvent) {
 }
 //goto utils
 export function getEnum(): any {
-    const type = getLocation().slice(0,-1);//truck
+    const type = getLocation().slice(0, -1);//truck
     ///export this map as a var 
+    console.log(typeof CargoTypes)
     const kvp = {
-        "truck": [CargoTypes],
-        "car": [BodyTypes, Transmissions]
+        "truck": [{ cargoType: CargoTypes }],
+        "car": [{ bodyType: BodyTypes }, { transmission: Transmissions }]
     }
     return kvp[type];
 }
@@ -165,7 +167,7 @@ function createTruckRow(truck: Truck) {
     return row;
 }
 
-function getClass(type: string, data: { id: string, make: string, model: string }) {
+export function getClass(type: string, data: { id: string, make: string, model: string }) {
     return type === "car" ? new Car(data.id, data.make, data.model) : new Truck(data.id, data.make, data.model);
 }
 async function onSubmit(data) {

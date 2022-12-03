@@ -1,20 +1,27 @@
 import { span, input, label, select, option, button, form, div } from "../dom/dom";
 import { BodyTypes, Transmissions } from "../vehicle";
-import { getEnum } from "../trucks";
+import { getEnum, getClass } from "../trucks";
+import { getLocation } from "../utils";
 
 export function CreateTruck(keys) {
-    const enumNames = getEnum();
-    console.log(enumNames)
+    const enums = getEnum();
+    console.log(enums);
+
     const fields = keys.map(key => {
-        enumNames.forEach(en => {
-            if (key === en) {
-                const values = Object.keys(Transmissions).filter(x => isNaN(Number(x)));
+        for (let i = 0; i < enums.length; i++) {
+            let en = enums[i];
+            const enumKey = Object.keys(en)[0];
+            console.log(key);
+            const enumVals = Object.values(en[enumKey]).filter(v => isNaN(Number(v)));
+            console.log(enumVals);
+            if (key === enumKey) {
+                const values = enumVals;
                 const options = values.map(val => option({ value: val, textContent: val }));
                 const currentSpan = span({}, key);
                 const currentSelect = select({ name: key }, ...options);
                 return label({}, currentSpan, currentSelect);
             }
-        })
+        }
 
         const currentSpan = span({}, key.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase());
         const currentInput = input({ type: "text", name: key });
