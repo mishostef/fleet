@@ -30,9 +30,8 @@ document.addEventListener('click', (e) => {
 });
 
 function initialize(className) {
-    ///to replace with bottle
     const vehicleType = getLocation().slice(0, -1);
-    const Class = getClass(vehicleType, { id: "a", model: "b", make: "c" })//className === "car" ? new Car("a", "b", "c") : new Truck("a", "b", "c");
+    const Class = getClass(vehicleType, { id: "a", model: "b", make: "c" });
     const keys = Object.keys(Class).filter(key => key !== "id");
     const { newEditor, html } = getEditor(keys, CreateTruck, 1);
     newEditor.appendChild(html)
@@ -42,7 +41,7 @@ function initialize(className) {
 
     const { newEditor: updateEditor, html: html2 } = getEditor(keys, EditTruck, 2)
     const reference = document.querySelector('main') as HTMLElement;
-    updateEditor.appendChild(html2)//insertBefore(html2, reference);
+    updateEditor.appendChild(html2);
     const editForm = document.getElementById("edit") as HTMLFormElement;
     editForm.style.background = "yellow";
     let e2 = new Editor(editForm, onEdit, keys, actionButton);
@@ -77,15 +76,15 @@ function toggleForms(editForm: HTMLFormElement, createForm: HTMLFormElement) {
     }
 }
 
-function listenForTableclick(e: MouseEvent) {
+async function listenForTableclick(e: MouseEvent) {
     const target = e.target;
     if (target instanceof HTMLButtonElement) {
         const btnText = target.textContent;
         if (btnText == "Edit" || btnText == "Delete") {
+            const activatedRow = (e.target as HTMLElement).parentElement.parentElement as HTMLTableRowElement;
+            editId = activatedRow.children[0].textContent;
             if (btnText == "Edit") {
                 isEditing = true;
-                const activatedRow = (e.target as HTMLElement).parentElement.parentElement as HTMLTableRowElement;
-                editId = activatedRow.children[0].textContent;
                 const keys = ["make", "model", "cargoType", "capacity", "rentalPrice"];
                 const record = getTableRecord(activatedRow, keys);
                 const createForm = document.getElementById("create") as HTMLFormElement;
@@ -93,7 +92,14 @@ function listenForTableclick(e: MouseEvent) {
                 setFormValues(keys, editForm, record);
                 toggleForms(editForm, createForm);
             } else if (btnText == "Delete") {
-                ls.delete('cars', editId);
+                const currentCollection = getLocation();
+                console.log('currentCollection = ', currentCollection)
+                try {
+                    await ls.delete(currentCollection, editId);
+                } catch (error) {
+                    alert(error);
+                }
+
             }
         }
     }
@@ -101,8 +107,6 @@ function listenForTableclick(e: MouseEvent) {
 //goto utils
 export function getEnum(): any {
     const type = getLocation().slice(0, -1);//truck
-    ///export this map as a var 
-    console.log(typeof CargoTypes)
     const kvp = {
         "truck": [{ cargoType: CargoTypes }],
         "car": [{ bodyType: BodyTypes }, { transmission: Transmissions }]
@@ -116,7 +120,6 @@ function setFormValues(keys: string[], editForm: HTMLFormElement, record: {}) {
         enums.forEach(en => {
             const enumKey = Object.keys(en)[0];
             const enumVals = Object.values(en[enumKey]).filter(v => isNaN(Number(v)));
-            console.log(enumVals)
             if (key === enumKey) {
                 const selectItems = enumVals;
                 (editForm[key] as HTMLSelectElement).selectedIndex = selectItems[key]
@@ -146,9 +149,6 @@ function identify(cars: IVehicle[], id: string) {
 }
 
 function createTruckRow(truck: Truck) {
-    console.log(truck);
-    console.log(Object.keys(truck));
-    console.log(Object.entries(truck));
     const row = tr({},
         td({}, truck.id),
         td({}, truck.make),
@@ -158,7 +158,6 @@ function createTruckRow(truck: Truck) {
         td({}, `$${truck.rentalPrice.toString()}/day`),
         td({}, button({ className: "action edit" }, 'Edit'), button({ className: "action delete" }, 'Delete'))
     );
-
     return row;
 }
 

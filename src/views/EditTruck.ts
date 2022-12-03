@@ -9,9 +9,7 @@ export function EditTruck(keys) {
         for (let i = 0; i < enums.length; i++) {
             let en = enums[i];
             const enumKey = Object.keys(en)[0];
-            console.log(key);
             const enumVals = Object.values(en[enumKey]).filter(v => isNaN(Number(v)));
-            console.log(enumVals);
             if (key === enumKey) {
                 const values = enumVals;
                 const options = values.map(val => option({ value: val, textContent: val }));
