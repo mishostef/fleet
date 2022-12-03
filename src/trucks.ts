@@ -1,8 +1,8 @@
 import { LocalStorage } from "./Storage";
-import { BodyTypes, Car, IVehicle, Transmissions, Truck } from "./vehicle";
+import { BodyTypes, Car, CargoTypes, IVehicle, Transmissions, Truck, Vehicle } from "./vehicle";
 import { generateId } from "./utils";
 import { Editor } from "./dom/Editor";
-import { FormView } from "./views/FormView";
+import { CreateTruck } from "./views/CreateTruck";
 import { EditForm } from "./views/EditForm";
 import { getLocation } from "./utils";
 import { Table } from "./dom/Table";
@@ -31,9 +31,9 @@ document.addEventListener('click', (e) => {
 
 function initialize(className) {
     ///to replace with bottle
-    const Class = className==="car"?new Car("a", "b", "c"):new Truck("a", "b", "c");
+    const Class = className === "car" ? new Car("a", "b", "c") : new Truck("a", "b", "c");
     const keys = Object.keys(Class).filter(key => key !== "id");
-    const { newEditor, html } = getEditor(keys, FormView, 1);
+    const { newEditor, html } = getEditor(keys, CreateTruck, 1);
     newEditor.appendChild(html)
     const createForm = document.getElementById("create") as HTMLFormElement;
     createForm.style.background = "red";
@@ -41,7 +41,7 @@ function initialize(className) {
 
     const { newEditor: updateEditor, html: html2 } = getEditor(keys, EditForm, 2)
     const reference = document.querySelector('main') as HTMLElement;
-    updateEditor.insertBefore(html2, reference);
+    updateEditor.appendChild(html2)//insertBefore(html2, reference);
     const editForm = document.getElementById("edit") as HTMLFormElement;
     editForm.style.background = "yellow";
     let e2 = new Editor(editForm, onEdit, keys, actionButton);
@@ -49,13 +49,14 @@ function initialize(className) {
 }
 
 const table = document.getElementsByTagName('table')[0];
-const tableManager = new Table(table, createCarRow, identify);
+const tableManager = new Table(table, createTruckRow, identify);
 
 hidrate(tableManager);
 
 async function hidrate(tableManager: Table) {
-    const cars = await ls.getAll('cars');
-    cars.forEach(car => tableManager.add(car));
+    const currentType = getLocation();
+    const vehicles = await ls.getAll(currentType);
+    vehicles.forEach(vehicle => tableManager.add(vehicle));
 }
 
 function getEditor(keys: string[], view, index) {
@@ -84,7 +85,7 @@ function listenForTableclick(e: MouseEvent) {
                 isEditing = true;
                 const activatedRow = (e.target as HTMLElement).parentElement.parentElement as HTMLTableRowElement;
                 editId = activatedRow.children[0].textContent;
-                const keys = ["make", "model", "bodyType", "numberOfSeats", "transmission", "rentalPrice"];
+                const keys = ["make", "model", "cargo", "capacity", "rentalPrice", "control",];
                 const record = getTableRecord(activatedRow, keys);
                 const createForm = document.getElementById("create") as HTMLFormElement;
                 const editForm = document.getElementById("edit") as HTMLFormElement;
@@ -96,17 +97,38 @@ function listenForTableclick(e: MouseEvent) {
         }
     }
 }
+//goto utils
+export function getEnum(): any {
+    const type = getLocation().slice(0,-1);//truck
+    ///export this map as a var 
+    const kvp = {
+        "truck": [CargoTypes],
+        "car": [BodyTypes, Transmissions]
+    }
+    return kvp[type];
+}
 
 function setFormValues(keys: string[], editForm: HTMLFormElement, record: {}) {
+    const enums = getEnum();
     keys.forEach(key => {
-        if (key === "bodyType" || key === "transmission") {
-            const selectItems = key === "bodyType" ? BodyTypes : Transmissions;
-            (editForm[key] as HTMLSelectElement).selectedIndex = selectItems[key];
-        }
+        // enums.forEach(e => {
+        //     if (key === e) {
+        //         const selectItems = e;
+        //         if (editForm[e.key] as HTMLSelectElement).selectedIndex = e[e.key]
+        //     }
+        // })
         editForm[key].value = record[key];
     });
 }
 
+
+// keys.forEach(key => {
+//     if (key === "bodyType" || key === "transmission") {
+//         const selectItems = key === "bodyType" ? BodyTypes : Transmissions;
+//         (editForm[key] as HTMLSelectElement).selectedIndex = selectItems[key];
+//     }
+//     editForm[key].value = record[key];
+// });
 function getTableRecord(activatedRow: HTMLTableRowElement, keys: string[]) {
     return [...activatedRow.children].slice(1).reduce((a, b, index) => {
         const key = keys[index];
@@ -126,30 +148,32 @@ function identify(cars: IVehicle[], id: string) {
     return cars.find(e => e.id == id);
 }
 
-function createCarRow(car: Car) {
-    console.log(car);
-    console.log(Object.keys(car));
-    console.log(Object.entries(car));
+function createTruckRow(truck: Truck) {
+    console.log(truck);
+    console.log(Object.keys(truck));
+    console.log(Object.entries(truck));
     const row = tr({},
-        td({}, car.id),
-        td({}, car.make),
-        td({}, car.model),
-        td({}, BodyTypes[car.bodyType]),
-        td({}, car.numberOfSeats.toString()),
-        td({}, Transmissions[car.transmission]),
-        td({}, `$${car.rentalPrice.toString()}/day`),
+        td({}, truck.id),
+        td({}, truck.make),
+        td({}, truck.model),
+        td({}, CargoTypes[truck.cargoType]),
+        td({}, truck.capacity.toString()),
+        td({}, `$${truck.rentalPrice.toString()}/day`),
         td({}, button({ className: "action edit" }, 'Edit'), button({ className: "action delete" }, 'Delete'))
     );
 
     return row;
 }
 
+function getClass(type: string, data: { id: string, make: string, model: string }) {
+    return type === "car" ? new Car(data.id, data.make, data.model) : new Truck(data.id, data.make, data.model);
+}
 async function onSubmit(data) {
     data.id = generateId();
     alert(JSON.stringify(data));
     const type = getLocation();
     ///to replace with bottle
-    const Class = type==="car"?new Car(data.id, data.make, data.model):new Truck(data.id, data.make, data.model);
+    const Class = getClass(type, data);
     try {
         ls.create(type, Class);
     } catch (error) {

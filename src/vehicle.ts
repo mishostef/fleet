@@ -28,10 +28,13 @@ export interface CarParams {
     numberOfSeats: number;
     transmission: Transmissions;
 }
-export interface ICar extends IVehicle, CarParams{
-     
-}
+export interface ICar extends IVehicle, CarParams {
 
+}
+export interface TruckParams {
+    cargoType: CargoTypes;
+    capacity: number;
+}
 export class Car extends Vehicle {
     bodyType: BodyTypes;
     numberOfSeats: number;
@@ -57,7 +60,18 @@ export class Car extends Vehicle {
 export class Truck extends Vehicle {
     cargoType: CargoTypes;
     capacity: number;
-    constructor(public id: string, public make: string, public model: string) {
+    constructor(public id: string, public make: string, public model: string, truckParams?: TruckParams) {
         super(id, make, model);
+        if (truckParams) {
+            this.cargoType = truckParams.cargoType;
+            if (truckParams.capacity < 0) {
+                throw new RangeError("Capacity cannot be negative")
+            }
+            this.cargoType = truckParams.cargoType;
+            this.capacity = truckParams.capacity;
+        } else {
+            this.cargoType = CargoTypes.box;
+            this.capacity = 2;
+        }
     }
 }
