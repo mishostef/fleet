@@ -19,16 +19,17 @@ const actionButton = document.getElementsByClassName("action new")[0] as HTMLBut
 initialize();
 
 actionButton.addEventListener('click', function (e) {
+    isEditing = false;
     const createForm = document.getElementById("create") as HTMLFormElement;
     (e.target as HTMLButtonElement).style.display = "none";
     const editForm = document.getElementById("edit") as HTMLFormElement;
     toggleForms(editForm, createForm);
-
-
 });
+
 document.addEventListener('click', (e) => {
     listenForTableclick(e);
 });
+
 function initialize() {
     const keys = Object.keys(new Car("a", "b", "c")).filter(key => key !== "id");
     const { newEditor, html } = getEditor(keys, FormView, 1);

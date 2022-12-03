@@ -1,7 +1,7 @@
 import { span, input, label, select, option, button, form, div } from "../dom/dom";
 import { BodyTypes, Transmissions } from "../vehicle";
 
-export function FormView(keys, mode: boolean = false) {
+export function FormView(keys) {
     const fields = keys.map(key => {
         if (key === "bodyType") {
             const values = Object.keys(BodyTypes).filter(x => isNaN(Number(x)));
