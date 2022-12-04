@@ -17,7 +17,19 @@ export class LocalStorage implements Storage {
     async getAll(collectionName: string): Promise<Record[]> {
         return JSON.parse(localStorage.getItem(collectionName) || null) || [];
     }
+    async getAllCollectionsData(): Promise<Record[]> {
+        const obj = Object.keys(localStorage)
+            .reduce((obj, k) => {
+                return {
+                    ...obj, [k]: (JSON.parse(localStorage.getItem(k))).map(x => {
+                        x.type = k.slice(0, -1);
+                        return x ;
+                    })
+                }
+            }, {});
+        return Object.values(obj);
 
+    }
     async getById(collectionName: string, id: string): Promise<Record> {
         const items = await this.getAll(collectionName);
         const result = items.find(i => i.id == id);

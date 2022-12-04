@@ -6,7 +6,7 @@ export interface IVehicle {
     model: string;
 }
 
-export abstract class Vehicle {
+export abstract class Vehicle implements IVehicle{
     rentalPrice: number;
     rentedTo: string | null;
     constructor(public id: string, public make: string, public model: string) {
