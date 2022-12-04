@@ -1,13 +1,14 @@
 import { LocalStorage } from "./Storage";
 import { IVehicle, Vehicle } from "./vehicle";
 import { Table } from "./dom/Table";
-import { tr, td, span, button } from "./dom/dom";
+import { tr, td, a } from "./dom/dom";
 import { IType, overviewOptions, IStatus } from "./maintypes";
 const ls = new LocalStorage();
 
 const form = document.getElementById("overviewForm") as HTMLFormElement;
 const urlParams = new URLSearchParams(window.location.search);
-const selectedCollection = urlParams.get('type');
+const type = urlParams.get('type');
+const selectedCollection = isNaN(Number(type)) ? type : overviewOptions[Number(type)];
 const showAvailable = (urlParams.get("availableOnly"));
 
 const table = document.getElementsByTagName('table')[0];
@@ -78,7 +79,7 @@ function createOverviewRow(extendedVehicle: IVehicle & IType & IStatus) {
         td({}, extendedVehicle.model),
         td({}, `$${extendedVehicle.rentalPrice.toString()}/day`),
         td({}, extendedVehicle.status),
-        td({}, button({ className: "action edit" }, 'Edit'), button({ className: "action delete" }, 'Delete'))
+        a({ href: `/details.html?id=${extendedVehicle.id}` }, "Detais")
     );
 
     return row;

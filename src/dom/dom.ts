@@ -40,3 +40,7 @@ export const select: elementFactory<HTMLSelectElement> = dom.bind(null, 'select'
 export const option: elementFactory<HTMLOptionElement> = dom.bind(null, 'option');
 export const form: elementFactory<HTMLFormElement> = dom.bind(null, 'form');
 export const div: elementFactory<HTMLDivElement> = dom.bind(null, 'div');
+export const a: elementFactory<HTMLAnchorElement> = dom.bind(null, 'a');
+export const p: elementFactory<HTMLParagraphElement> = dom.bind(null, 'p');
+export const h3: elementFactory<HTMLHeadingElement> = dom.bind(null, 'h3');
+export const strong: elementFactory<HTMLSpanElement> = dom.bind(null, 'strong');
