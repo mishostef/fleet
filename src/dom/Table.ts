@@ -34,7 +34,10 @@ export class Table {
         this.records.push(record);
         this.rows.set(record, row);
     }
-
+    clear() {
+        this.element.replaceChildren(this.element.children[0]);
+        this.records = [];
+    }
     get(id: any): any {
         if (typeof this.identify == 'function') {
             const result = this.identify(this.records, id);

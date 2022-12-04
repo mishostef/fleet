@@ -1,50 +1,52 @@
 import { LocalStorage } from "./Storage";
-import { BodyTypes, Car, IVehicle, Vehicle } from "./vehicle";
-import { generateId } from "./utils";
-import { Editor } from "./dom/Editor";
-import { FormView } from "./views/FormView";
-import { getLocation } from "./utils";
+import { IVehicle, Vehicle } from "./vehicle";
 import { Table } from "./dom/Table";
 import { tr, td, span, button } from "./dom/dom";
+import { IType, overviewOptions, IStatus } from "./maintypes";
 const ls = new LocalStorage();
-const id = generateId();
-const car = new Car(id, "golf", "VW");
-const form = document.getElementById("overviewForm") as HTMLFormElement;
 
-export enum overviewOptions {
-    "all",
-    "cars",
-    "trucks"
-}
+const form = document.getElementById("overviewForm") as HTMLFormElement;
+const urlParams = new URLSearchParams(window.location.search);
+const selectedCollection = urlParams.get('type');
+const showAvailable = (urlParams.get("availableOnly"));
+
 const table = document.getElementsByTagName('table')[0];
 console.log(table);
 const tableManager = new Table(table, createOverviewRow, identify);
-hidrate(tableManager);
-form.addEventListener("submit", async function (e) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const selectedCollection=urlParams.get('type');
-    const showAvailable=(urlParams.get("availableOnly"));
-   
-    if (overviewOptions[Number(selectedCollection)] == "all") {
-        const tableRecords = await getAllTableRecords();
-        console.log('tablerecords: ', tableRecords)
-    }
-    if (showAvailable) {
+(async function () {
+    const records = await getRecordsByQuery();
+    hidrate(tableManager, records);
+}())
 
-    }
+form.addEventListener("submit", async function (e) {
+    let records = await getRecordsByQuery();
+    console.log('in event records=', records);
+    tableManager.clear();
+    hidrate(tableManager, records);
 });
-export interface IType {
-    type: string;
+
+
+async function getRecordsByQuery() {
+    let records = selectedCollection === "all" || selectedCollection === null ?
+        getAllTableRecords() :
+        (await ls.getAll(selectedCollection)).map(vehicle => {
+            (vehicle as any).type = selectedCollection.slice(0, -1);
+            return vehicle;
+        }).map(createOverviewTableRecord);
+    if (showAvailable) {
+        records = (records as any).filter(rec => rec.status === "Available");
+    }
+    return records;
 }
 
 async function getAllTableRecords() {
     const lsValues = await ls.getAllCollectionsData();
     const allVehicles = [].concat.apply([], lsValues);
-    const tableRecords = allVehicles.map(getTableRecord);
+    const tableRecords = allVehicles.map(createOverviewTableRecord);
     return tableRecords;
 }
 
-function getTableRecord(vehicle: IVehicle & IType) {
+function createOverviewTableRecord(vehicle: IVehicle & IType) {
     return {
         id: vehicle.id,
         type: vehicle.type,
@@ -55,12 +57,8 @@ function getTableRecord(vehicle: IVehicle & IType) {
     }
 }
 
-// tableManager.add(car)
-
-
-
-async function hidrate(tableManager: Table) {
-    const vehicles = await getAllTableRecords();
+async function hidrate(tableManager: Table, records?: IVehicle & IType) {
+    const vehicles = records ? records : await getAllTableRecords();
     vehicles.forEach(vehicle => tableManager.add(vehicle));
 }
 
@@ -68,9 +66,7 @@ async function hidrate(tableManager: Table) {
 function identify(cars: IVehicle[], id: string) {
     return cars.find(e => e.id == id);
 }
-interface IStatus {
-    status: "Rented" | "Available"
-}
+
 function createOverviewRow(extendedVehicle: IVehicle & IType & IStatus) {
     console.log(extendedVehicle);
     console.log(Object.keys(extendedVehicle));
@@ -86,13 +82,4 @@ function createOverviewRow(extendedVehicle: IVehicle & IType & IStatus) {
     );
 
     return row;
-}
-
-
-
-async function onSubmit(data) {
-    // data.id = generateId();
-    // alert(JSON.stringify(data));
-    // const type = getLocation();
-    // ls.create(type, new Car(data.id, data.make, data.model));
 }
