@@ -59,19 +59,20 @@ const table = document.getElementsByTagName('table')[0];
 function identify(cars: IVehicle[], id: string) {
     return cars.find(e => e.id == id);
 }
-
-function createCarRow(car: Car) {
-    console.log(car);
-    console.log(Object.keys(car));
-    console.log(Object.entries(car));
+interface IStatus {
+    status: "Rented" | "Available"
+}
+function createOverviewRow(extendedVehicle: IVehicle & IType & IStatus) {
+    console.log(extendedVehicle);
+    console.log(Object.keys(extendedVehicle));
+    console.log(Object.entries(extendedVehicle));
     const row = tr({},
-        td({}, car.id),
-        td({}, car.make),
-        td({}, car.model),
-        td({}, BodyTypes[car.bodyType]),
-        td({}, car.numberOfSeats.toString()),
-        td({}, car.transmission.toString()),
-        td({}, `$${car.rentalPrice.toString()}/day`),
+        td({}, extendedVehicle.id),
+        td({}, extendedVehicle.type),
+        td({}, extendedVehicle.make),
+        td({}, extendedVehicle.model),
+        td({}, `$${extendedVehicle.rentalPrice.toString()}/day`),
+        td({}, extendedVehicle.status),
         td({}, button({ className: "action edit" }, 'Edit'), button({ className: "action delete" }, 'Delete'))
     );
 
