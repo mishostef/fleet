@@ -1,6 +1,4 @@
-import { IVehicle } from "./vehicle";
-import { IType, IStatus } from "./maintypes";
-import { span, p, div, form, label, strong } from "./dom/dom";
+import { span, p, div, form, label, strong, input, button } from "./dom/dom";
 import { LocalStorage } from "./Storage";
 import { CargoTypes, BodyTypes, Transmissions } from "./vehicle";
 const enumMap = {
@@ -29,11 +27,17 @@ const enumMap = {
 //                     <button class="action rent">Confirm</button>
 //                 </form>
 //             </div>
-
-async function createDetails(extendedVehicle?: IVehicle & IType & IStatus) {
+function createDetailsForm() {
+    return form({},
+        label({},
+            span({}, "Rent to"),
+            input({ type: "text", name: "name" })),
+        button({ className: "action rent" }, "Confirm")
+    );
+}
+async function createDetails() {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
-    alert(id);
     const ls = new LocalStorage();
     const lsValues = await ls.getAllCollectionsData();
     const allVehicles = [].concat.apply([], lsValues);
@@ -46,11 +50,21 @@ async function createDetails(extendedVehicle?: IVehicle & IType & IStatus) {
         }
         return p({}, span({ className: "col" }, k), strong({ className: "col" }, v === null ? '' : v.toString()))
     });
-
-    const row = div({}, ...props)
+    const detailsDiv = div({ className: "details" }, ...props);
+    const form = createDetailsForm();
+    const rentalDiv = div({ className: "rental" },
+        p({}, span({ classname: "col" }, "Rented to"),
+            strong({}, props["rentedTo"] ? "noone" : props["rentedTo"])),
+        
+        button({ className: "action release" }, "End contract"),
+        form
+    );
     const main = document.getElementsByTagName("main")[0];
     main.replaceChildren();
-    main.appendChild(row)
+    main.appendChild(detailsDiv);
+    main.appendChild(rentalDiv);
 
 }
+
+
 createDetails()

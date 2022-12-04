@@ -30,6 +30,7 @@ document.addEventListener('click', (e) => {
 });
 
 function initialize(className) {
+//todo - extract common func
     const vehicleType = getLocation().slice(0, -1);
     const Class = getClass(vehicleType, { id: "a", model: "b", make: "c" });
     const keys = Object.keys(Class).filter(key => key !== "id");
@@ -138,7 +139,6 @@ function getTableRecord(activatedRow: HTMLTableRowElement, keys: string[]) {
             a[key] = Number(price[0]);
         } else {
             a[key] = b.textContent;
-
         }
         return a;
     }, {});
