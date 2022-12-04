@@ -16,29 +16,32 @@ export enum overviewOptions {
     "cars",
     "trucks"
 }
+const table = document.getElementsByTagName('table')[0];
+console.log(table);
+const tableManager = new Table(table, createOverviewRow, identify);
+hidrate(tableManager);
 form.addEventListener("submit", async function (e) {
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData);
-    alert(JSON.stringify(data));
-    const showAvailable = data["availableOnly"];
-    console.log(showAvailable);
-    console.log(showAvailable && data["availableOnly"])
-    const selectedCollection = data.type;
-    console.log(overviewOptions[Number(selectedCollection)]);
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedCollection=urlParams.get('type');
+    const showAvailable=(urlParams.get("availableOnly"));
+   
     if (overviewOptions[Number(selectedCollection)] == "all") {
-        const lsValues = await ls.getAllCollectionsData();
-        console.log('v=', lsValues);
-        const allVehicles = [].concat.apply([], lsValues);
-        console.log('x=', allVehicles)
-        const tableRecords = allVehicles.map(getTableRecord);
+        const tableRecords = await getAllTableRecords();
         console.log('tablerecords: ', tableRecords)
     }
     if (showAvailable) {
 
     }
 });
-interface IType {
+export interface IType {
     type: string;
+}
+
+async function getAllTableRecords() {
+    const lsValues = await ls.getAllCollectionsData();
+    const allVehicles = [].concat.apply([], lsValues);
+    const tableRecords = allVehicles.map(getTableRecord);
+    return tableRecords;
 }
 
 function getTableRecord(vehicle: IVehicle & IType) {
@@ -51,10 +54,16 @@ function getTableRecord(vehicle: IVehicle & IType) {
         status: vehicle.rentedTo ? "Rented" : "Available"
     }
 }
-const table = document.getElementsByTagName('table')[0];
-// console.log(table);
-// const tableManager = new Table(table, createCarRow, identify);
+
 // tableManager.add(car)
+
+
+
+async function hidrate(tableManager: Table) {
+    const vehicles = await getAllTableRecords();
+    vehicles.forEach(vehicle => tableManager.add(vehicle));
+}
+
 
 function identify(cars: IVehicle[], id: string) {
     return cars.find(e => e.id == id);
