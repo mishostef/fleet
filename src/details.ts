@@ -1,6 +1,7 @@
 import { span, p, div, form, label, strong, input, button } from "./dom/dom";
 import { LocalStorage } from "./Storage";
 import { CargoTypes, BodyTypes, Transmissions } from "./vehicle";
+
 const enumMap = {
     cargoType: CargoTypes,
     bodyType: BodyTypes,

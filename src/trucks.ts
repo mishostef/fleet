@@ -1,12 +1,10 @@
 import { LocalStorage } from "./Storage";
 import { IVehicle } from "./vehicle";
-import { generateId } from "./utils";
 import { Editor } from "./dom/Editor";
 import { CreateTruck } from "./views/CreateTruck";
 import { EditTruck } from "./views/EditTruck"
-import { getLocation, getClass } from "./utils";
 import { Table } from "./dom/Table";
-import { mapSelectsToValues, setFormValues } from "./utils"
+import { mapSelectsToValues, setFormValues, getTableRecord, getLocation, getClass, generateId } from "./utils"
 import { createTruckRow } from "./views/createTruckRow";
 
 let editId = null;
@@ -101,21 +99,6 @@ async function listenForTableclick(e: MouseEvent) {
             }
         }
     }
-}
-
-
-function getTableRecord(activatedRow: HTMLTableRowElement, keys: string[]) {
-    return [...activatedRow.children].slice(1).reduce((a, b, index) => {
-        const key = keys[index];
-        if (key === "rentalPrice") {
-            const r = /-?\d+/;
-            const price = b.textContent.match(r);
-            a[key] = Number(price[0]);
-        } else {
-            a[key] = b.textContent;
-        }
-        return a;
-    }, {});
 }
 
 function identify(cars: IVehicle[], id: string) {

@@ -53,3 +53,17 @@ export function setFormValues(keys: string[], editForm: HTMLFormElement, record:
         editForm[key].value = record[key];
     });
 }
+
+export function getTableRecord(activatedRow: HTMLTableRowElement, keys: string[]) {
+    return [...activatedRow.children].slice(1).reduce((a, b, index) => {
+        const key = keys[index];
+        if (key === "rentalPrice") {
+            const r = /-?\d+/;
+            const price = b.textContent.match(r);
+            a[key] = Number(price[0]);
+        } else {
+            a[key] = b.textContent;
+        }
+        return a;
+    }, {});
+}
