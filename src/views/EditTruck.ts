@@ -3,8 +3,7 @@ import { getEnum } from "../trucks";
 
 export function EditTruck(keys) {
     const enums = getEnum();
-    console.log(enums);
-
+    
     const fields = keys.map(key => {
         for (let i = 0; i < enums.length; i++) {
             let en = enums[i];

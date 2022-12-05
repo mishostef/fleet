@@ -13,7 +13,7 @@ export class Table {
             this.records = records;
         }
         this.records.forEach(this.add.bind(this));
-        this.element.addEventListener('click', (e) => {///added delete functionality
+        this.element.addEventListener('click', (e) => {
             if (e.target instanceof HTMLButtonElement) {
                 if (e.target.textContent === "Delete") {
                     const activatedRow = e.target.parentElement.parentElement as HTMLTableRowElement;

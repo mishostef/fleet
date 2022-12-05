@@ -12,7 +12,7 @@ const selectedCollection = isNaN(Number(type)) ? type : overviewOptions[Number(t
 const showAvailable = (urlParams.get("availableOnly"));
 
 const table = document.getElementsByTagName('table')[0];
-console.log(table);
+
 const tableManager = new Table(table, createOverviewRow, identify);
 (async function () {
     const records = await getRecordsByQuery();
@@ -21,7 +21,6 @@ const tableManager = new Table(table, createOverviewRow, identify);
 
 form.addEventListener("submit", async function (e) {
     let records = await getRecordsByQuery();
-    console.log('in event records=', records);
     tableManager.clear();
     hidrate(tableManager, records);
 });
@@ -69,9 +68,6 @@ function identify(cars: IVehicle[], id: string) {
 }
 
 function createOverviewRow(extendedVehicle: IVehicle & IType & IStatus) {
-    console.log(extendedVehicle);
-    console.log(Object.keys(extendedVehicle));
-    console.log(Object.entries(extendedVehicle));
     const row = tr({},
         td({}, extendedVehicle.id),
         td({}, extendedVehicle.type),

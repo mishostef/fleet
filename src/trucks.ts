@@ -95,7 +95,6 @@ async function listenForTableclick(e: MouseEvent) {
                 toggleForms(editForm, createForm);
             } else if (btnText == "Delete") {
                 const currentCollection = getLocation();
-                console.log('currentCollection = ', currentCollection)
                 try {
                     await ls.delete(currentCollection, editId);
                 } catch (error) {

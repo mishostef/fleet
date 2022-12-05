@@ -10,9 +10,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const id = urlParams.get('id');
 const ls = new LocalStorage();
 createDetails();
-// const addTenantForm = document.getElementsByTagName('form')[0];
 
-// addTenantForm.addEventListener('submit', addTenant);
 function createDetailsForm() {
     return form({ onsubmit: addTenant },
         label({},
@@ -71,4 +69,3 @@ async function addTenant(e) {
     await ls.update(collectionName, id, { ...data, rentedTo: formData.get("name") });
     createDetails();
 }
-

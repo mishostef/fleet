@@ -126,9 +126,6 @@ function identify(cars: IVehicle[], id: string) {
 }
 
 function createCarRow(car: Car) {
-    console.log(car);
-    console.log(Object.keys(car));
-    console.log(Object.entries(car));
     const row = tr({},
         td({}, car.id),
         td({}, car.make),
