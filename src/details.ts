@@ -6,6 +6,9 @@ const enumMap = {
     bodyType: BodyTypes,
     transmission: Transmissions
 }
+const urlParams = new URLSearchParams(window.location.search);
+const id = urlParams.get('id');
+const ls = new LocalStorage();
 // <h3>Opel Corsa</h3>
 //             <div class="details">
 //                 <p><span class="col">ID:</span><strong>0076-5b58</strong></p>
@@ -36,12 +39,7 @@ function createDetailsForm() {
     );
 }
 async function createDetails() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
-    const ls = new LocalStorage();
-    const lsValues = await ls.getAllCollectionsData();
-    const allVehicles = [].concat.apply([], lsValues);
-    const currentVehicle = allVehicles.find(v => v.id === id);
+    const currentVehicle = await getCurrentVehicle();
     alert(JSON.stringify(currentVehicle));
     const props = Object.entries(currentVehicle).map(kv => {
         let [k, v] = kv;
@@ -53,10 +51,10 @@ async function createDetails() {
     const detailsDiv = div({ className: "details" }, ...props);
     const form = createDetailsForm();
     const rentalDiv = div({ className: "rental" },
-        p({}, span({ classname: "col" }, "Rented to"),
-            strong({}, props["rentedTo"] ? "noone" : props["rentedTo"])),
-        
-        button({ className: "action release" }, "End contract"),
+        p({}, span({ classname: "col" }, "Rented to:  "),
+            strong({}, currentVehicle["rentedTo"] ? currentVehicle["rentedTo"] : "noone")),
+
+        button({ className: "action release", onclick: endContract }, "End contract"),
         form
     );
     const main = document.getElementsByTagName("main")[0];
@@ -65,6 +63,21 @@ async function createDetails() {
     main.appendChild(rentalDiv);
 
 }
+async function getCurrentVehicle() {
+    const lsValues = await ls.getAllCollectionsData();
+    const allVehicles = [].concat.apply([], lsValues);
+    const currentVehicle = allVehicles.find(v => v.id === id);
+    return currentVehicle;
+}
 
+async function endContract() {
+    alert("end contract");
+    const data = await getCurrentVehicle();
+    const collectionName = `${data.type}s`;
+    console.log(data)
+    delete data.type;
+    console.log(data);
+    await ls.update(collectionName, id, { ...data, rentedTo: null });
+}
 
 createDetails()
