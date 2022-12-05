@@ -54,7 +54,7 @@ export class Table {
     replace(id: any, newRecord: any) {
         const record = this.get(id);
         //const index = this.records.findIndex(r => r == record);
-        const index = [...this.rows.keys()].findIndex(x => x['id'] = id);
+        const index = [...this.rows.keys()].findIndex(x => x['id'] === id);
         // Update row in DOM and collection
         const f = this.createRow.bind(this);
         const newRow = f(newRecord);
