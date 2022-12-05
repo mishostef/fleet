@@ -9,33 +9,16 @@ const enumMap = {
 const urlParams = new URLSearchParams(window.location.search);
 const id = urlParams.get('id');
 const ls = new LocalStorage();
-// <h3>Opel Corsa</h3>
-//             <div class="details">
-//                 <p><span class="col">ID:</span><strong>0076-5b58</strong></p>
-//                 <p><span class="col">Body type:</span><strong>Hatchback</strong></p>
-//                 <p><span class="col">Seats:</span><strong>4</strong></p>
-//                 <p><span class="col">Transmission:</span><strong>Manual</strong></p>
-//                 <p><span class="col">Rental price:</span><strong>$55/day</strong></p>
-//             </div>
+createDetails();
+// const addTenantForm = document.getElementsByTagName('form')[0];
 
-//             <div class="rental">
-//                 <p><span class="col">Status:</span><strong>Available/Rented</strong></p>
-//                 <p><span class="col">Rented to:</span><strong>John Smith</strong> <button class="action release">End
-//                         contract</button></p>
-//                 <form>
-//                     <label>
-//                         <span>Rent to</span>
-//                         <input type="text" name="name">
-//                     </label>
-//                     <button class="action rent">Confirm</button>
-//                 </form>
-//             </div>
+// addTenantForm.addEventListener('submit', addTenant);
 function createDetailsForm() {
-    return form({},
+    return form({ onsubmit: addTenant },
         label({},
             span({}, "Rent to"),
             input({ type: "text", name: "name" })),
-        button({ className: "action rent" }, "Confirm")
+        button({ className: "action rent", type: "submit" }, "Confirm")
     );
 }
 async function createDetails() {
@@ -74,10 +57,18 @@ async function endContract() {
     alert("end contract");
     const data = await getCurrentVehicle();
     const collectionName = `${data.type}s`;
-    console.log(data)
     delete data.type;
-    console.log(data);
     await ls.update(collectionName, id, { ...data, rentedTo: null });
+    createDetails();
 }
 
-createDetails()
+async function addTenant(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target)
+    const data = await getCurrentVehicle();
+    const collectionName = `${data.type}s`;
+    delete data.type;
+    await ls.update(collectionName, id, { ...data, rentedTo: formData.get("name") });
+    createDetails();
+}
+

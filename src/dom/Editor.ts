@@ -14,7 +14,6 @@ export class Editor {
     private async onSubmit(event: SubmitEvent) {
         event.preventDefault();
         const formData = new FormData(this.form);
-        const bodyType = formData.get('bodyType');
         const data = Object.fromEntries(this.propNames.map(n => [n, formData.get(n)]));
         try {
             await this.callback(data);
