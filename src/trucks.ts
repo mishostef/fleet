@@ -1,5 +1,5 @@
 import { LocalStorage } from "./Storage";
-import { BodyTypes, Car, CargoTypes, IVehicle, Transmissions, Truck, Vehicle } from "./vehicle";
+import { BodyTypes, Car, CargoTypes, CarParams, ICar, ITruck, IVehicle, Transmissions, Truck, TruckParams, Vehicle } from "./vehicle";
 import { generateId } from "./utils";
 import { Editor } from "./dom/Editor";
 import { CreateTruck } from "./views/CreateTruck";
@@ -30,7 +30,7 @@ document.addEventListener('click', (e) => {
 });
 
 function initialize(className) {
-//todo - extract common func
+    //todo - extract common func
     const vehicleType = getLocation().slice(0, -1);
     const Class = getClass(vehicleType, { id: "a", model: "b", make: "c" });
     const keys = Object.keys(Class).filter(key => key !== "id");
@@ -161,8 +161,9 @@ function createTruckRow(truck: Truck) {
     return row;
 }
 
-export function getClass(type: string, data: { id: string, make: string, model: string }) {
-    return type === "car" ? new Car(data.id, data.make, data.model) : new Truck(data.id, data.make, data.model);
+export function getClass(type: string, data: any) {
+    const { id, make, model, ...rest } = data;
+    return type === "car" ? new Car(id, make, model, rest) : new Truck(id, make, model, rest);
 }
 async function onSubmit(data) {
     data.id = generateId();

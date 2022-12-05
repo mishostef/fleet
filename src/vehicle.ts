@@ -6,7 +6,7 @@ export interface IVehicle {
     model: string;
 }
 
-export abstract class Vehicle implements IVehicle{
+export abstract class Vehicle implements IVehicle {
     rentalPrice: number;
     rentedTo: string | null;
     constructor(public id: string, public make: string, public model: string) {
@@ -27,14 +27,21 @@ export interface CarParams {
     bodyType: BodyTypes;
     numberOfSeats: number;
     transmission: Transmissions;
+    rentedTo: string | null;
+    rentalPrice: number;
 }
 export interface ICar extends IVehicle, CarParams {
 
 }
+export interface ITruck extends IVehicle, TruckParams { }
+
 export interface TruckParams {
     cargoType: CargoTypes;
     capacity: number;
+    rentedTo: string | null;
+    rentalPrice: number;
 }
+
 export class Car extends Vehicle {
     bodyType: BodyTypes;
     numberOfSeats: number;
@@ -49,6 +56,12 @@ export class Car extends Vehicle {
             }
             this.numberOfSeats = carParams.numberOfSeats;
             this.transmission = carParams.transmission;
+            if (carParams.rentedTo) {
+                this.rentedTo = carParams.rentedTo;
+            }
+            if (carParams.rentalPrice) {
+                this.rentalPrice = carParams.rentalPrice;
+            }
         } else {
             this.bodyType = BodyTypes.sedan;
             this.numberOfSeats = 4;
@@ -69,6 +82,12 @@ export class Truck extends Vehicle {
             }
             this.cargoType = truckParams.cargoType;
             this.capacity = truckParams.capacity;
+            if (truckParams.rentedTo) {
+                this.rentedTo = truckParams.rentedTo;
+            }
+            if (truckParams.rentalPrice) {
+                this.rentalPrice = truckParams.rentalPrice;
+            }
         } else {
             this.cargoType = CargoTypes.box;
             this.capacity = 2;
