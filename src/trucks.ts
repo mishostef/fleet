@@ -1,5 +1,5 @@
 import { LocalStorage } from "./Storage";
-import { IVehicle } from "./vehicle";
+import { Car, IVehicle, Truck } from "./vehicle";
 import { Editor } from "./dom/Editor";
 import { CreateTruck } from "./views/CreateTruck";
 import { EditTruck } from "./views/EditTruck"
@@ -7,11 +7,15 @@ import { Table } from "./dom/Table";
 import { mapSelectsToValues, setFormValues, getTableRecord, getLocation, getClass, generateId } from "./utils"
 import { createTruckRow } from "./views/createTruckRow";
 
+export const tableKeys = {
+    "truck": ["make", "model", "cargoType", "capacity", "rentalPrice"],
+    "car": ["make", "model", "bodyType", "numberOfSeats", "transmission", "rentalPrice"]
+};
+
 let editId = null;
 const ls = new LocalStorage();
-
 let isEditing = false;
-
+const vehicleType = getLocation().slice(0, -1);
 const actionButton = document.getElementsByClassName("action new")[0] as HTMLButtonElement;
 initialize();
 
@@ -28,11 +32,10 @@ document.addEventListener('click', (e) => {
 });
 
 function initialize() {
-    const vehicleType = getLocation().slice(0, -1);
     const Class = getClass(vehicleType, { id: "a", model: "b", make: "c" });
-    const keys = Object.keys(Class).filter(key => key !== "id");
-    const e1 = configEditor(keys, CreateTruck, onSubmit, "create");
-    const e2 = configEditor(keys, EditTruck, onEdit, "edit");
+    const vehicleKeys = Object.keys(Class).filter(key => key !== "id" && key != "rentedTo");
+    const e1 = configEditor(vehicleKeys, CreateTruck, onSubmit, "create");
+    const e2 = configEditor(vehicleKeys, EditTruck, onEdit, "edit");
     [...(document.querySelectorAll('.editor form') as NodeListOf<HTMLElement>)].forEach(el => el.style.display = "none");
 }
 
@@ -82,7 +85,7 @@ async function listenForTableclick(e: MouseEvent) {
             if (btnText == "Edit") {
                 isEditing = true;
                 //to be called conditionally depending on location
-                const keys = ["make", "model", "cargoType", "capacity", "rentalPrice"];
+                const keys = tableKeys[vehicleType];
                 const record = getTableRecord(activatedRow, keys);
                 const createForm = document.getElementById("create") as HTMLFormElement;
                 const editForm = document.getElementById("edit") as HTMLFormElement;
