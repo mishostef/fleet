@@ -79,7 +79,7 @@ function createOverviewRow(extendedVehicle: IVehicle & IType & IStatus) {
         td({}, extendedVehicle.model),
         td({}, `$${extendedVehicle.rentalPrice.toString()}/day`),
         td({}, extendedVehicle.status),
-        a({ href: `/details.html?id=${extendedVehicle.id}` }, "Detais")
+        td({}, a({ href: `/details.html?id=${extendedVehicle.id}` }, "Details"))
     );
 
     return row;
