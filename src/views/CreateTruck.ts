@@ -1,5 +1,6 @@
 import { span, input, label, select, option, button, form, div } from "../dom/dom";
 import { getEnum } from "../trucks";
+import { getLocation } from "../utils";
 
 
 export function CreateTruck(keys) {
@@ -26,7 +27,9 @@ export function CreateTruck(keys) {
         const currentInput = input({ type: "text", name: key });
         return label({}, currentSpan, currentInput);
     });
-    const submitBtn = button({ className: "action confirm", type: "submit", id: "create" }, "Add Car");
+    const type = getLocation().slice(0, -1);
+    const capitalizedType = type[0].toLocaleUpperCase() + type.slice(1);
+    const submitBtn = button({ className: "action confirm", type: "submit", id: "create" }, `Add ${capitalizedType}`);
     const cancelBtn = button({ className: "action cancel", type: "reset" }, "Cancel");
     const buttonWrapperDiv = div({}, submitBtn, cancelBtn);
     return form({ className: "align", id: "create" }, ...fields, buttonWrapperDiv)

@@ -86,6 +86,7 @@ async function listenForTableclick(e: MouseEvent) {
             editId = activatedRow.children[0].textContent;
             if (btnText == "Edit") {
                 isEditing = true;
+                //to be called conditionally depending on location
                 const keys = ["make", "model", "cargoType", "capacity", "rentalPrice"];
                 const record = getTableRecord(activatedRow, keys);
                 const createForm = document.getElementById("create") as HTMLFormElement;
@@ -147,7 +148,7 @@ function getTableRecord(activatedRow: HTMLTableRowElement, keys: string[]) {
 function identify(cars: IVehicle[], id: string) {
     return cars.find(e => e.id == id);
 }
-
+//to be called conditionally depending on location
 function createTruckRow(truck: Truck) {
     const row = tr({},
         td({}, truck.id),
