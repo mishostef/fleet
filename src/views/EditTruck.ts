@@ -1,5 +1,5 @@
 import { span, input, label, select, option, button, form, div } from "../dom/dom";
-import { getEnum } from "../trucks";
+import { getEnum } from "../utils";
 import { getLocation } from "../utils";
 
 export function EditTruck(keys) {

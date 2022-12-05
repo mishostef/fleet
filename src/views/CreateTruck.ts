@@ -1,11 +1,10 @@
 import { span, input, label, select, option, button, form, div } from "../dom/dom";
-import { getEnum } from "../trucks";
-import { getLocation } from "../utils";
+import { getLocation, getEnum } from "../utils";
 
 
 export function CreateTruck(keys) {
     const enums = getEnum();
-  
+
     const fields = keys.map(key => {
         for (let i = 0; i < enums.length; i++) {
             let en = enums[i];
