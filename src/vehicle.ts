@@ -75,22 +75,24 @@ export class Truck extends Vehicle {
     capacity: number;
     constructor(public id: string, public make: string, public model: string, truckParams?: TruckParams) {
         super(id, make, model);
+        this.cargoType = CargoTypes.box;
+        this.capacity = 2;
         if (truckParams) {
-            this.cargoType = truckParams.cargoType;
-            if (truckParams.capacity < 0) {
-                throw new RangeError("Capacity cannot be negative")
+            if (truckParams.capacity) {
+                if (truckParams.capacity < 0) {
+                    throw new RangeError("Capacity cannot be negative");
+                }
+                this.capacity = truckParams.capacity;
             }
-            this.cargoType = truckParams.cargoType;
-            this.capacity = truckParams.capacity;
+            if (truckParams.cargoType) {
+                this.cargoType = truckParams.cargoType;
+            }
             if (truckParams.rentedTo) {
                 this.rentedTo = truckParams.rentedTo;
             }
             if (truckParams.rentalPrice) {
                 this.rentalPrice = truckParams.rentalPrice;
             }
-        } else {
-            this.cargoType = CargoTypes.box;
-            this.capacity = 2;
         }
     }
 }
