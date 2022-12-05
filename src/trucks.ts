@@ -6,7 +6,7 @@ import { CreateTruck } from "./views/CreateTruck";
 import { EditTruck } from "./views/EditTruck"
 import { getLocation } from "./utils";
 import { Table } from "./dom/Table";
-import { tr, td, span, button } from "./dom/dom";
+import { tr, td, button } from "./dom/dom";
 
 let editId = null;
 
@@ -41,12 +41,25 @@ function initialize(className) {
     let editor = new Editor(createForm, onSubmit, keys, actionButton);
 
     const { newEditor: updateEditor, html: html2 } = getEditor(keys, EditTruck, 2)
-    const reference = document.querySelector('main') as HTMLElement;
     updateEditor.appendChild(html2);
+
     const editForm = document.getElementById("edit") as HTMLFormElement;
     editForm.style.background = "yellow";
     let e2 = new Editor(editForm, onEdit, keys, actionButton);
+    //const e2 = configEditor(keys, EditTruck, onEdit, "edit");
+
     [...(document.querySelectorAll('.editor form') as NodeListOf<HTMLElement>)].forEach(el => el.style.display = "none");
+}
+
+function configEditor(keys, view, handler, id) {
+    const index = id == "edit" ? 2 : 1;
+    const { newEditor: updateEditor, html: html2 } = getEditor(keys, view, index)
+    updateEditor.appendChild(html2);
+
+    const editForm = document.getElementById(id) as HTMLFormElement;
+    editForm.style.background = "#" + Math.floor(Math.random() * 16777215).toString(16);
+    let e2 = new Editor(editForm, handler, keys, actionButton);
+    return e2;
 }
 
 const table = document.getElementsByTagName('table')[0];
@@ -116,14 +129,20 @@ export function getEnum(): any {
 }
 
 function setFormValues(keys: string[], editForm: HTMLFormElement, record: {}) {
+    console.log('record=', record);
     const enums = getEnum();
+
     keys.forEach(key => {
         enums.forEach(en => {
             const enumKey = Object.keys(en)[0];
             const enumVals = Object.values(en[enumKey]).filter(v => isNaN(Number(v)));
             if (key === enumKey) {
-                const selectItems = enumVals;
-                (editForm[key] as HTMLSelectElement).selectedIndex = selectItems[key]
+                const enumValsString = Object.values(en[enumKey]).filter(v => isNaN(Number(v)));
+                const enumValsNumber = Object.values(en[enumKey]).filter(v => !isNaN(Number(v)));
+                const currentSelectValue = record[enumKey];
+                const index = enumValsString.indexOf(currentSelectValue);
+
+                (editForm[key] as HTMLSelectElement).selectedIndex = Number(enumValsNumber[index]);//[key]
             }
         });
         editForm[key].value = record[key];
@@ -149,6 +168,8 @@ function identify(cars: IVehicle[], id: string) {
 }
 //to be called conditionally depending on location
 function createTruckRow(truck: Truck) {
+    console.log(truck.cargoType);
+    console.log(CargoTypes[truck.cargoType]);
     const row = tr({},
         td({}, truck.id),
         td({}, truck.make),
@@ -170,6 +191,7 @@ async function onSubmit(data) {
     alert(JSON.stringify(data));
     const type = getLocation();
     ///to replace with bottle
+    mapSelectsToValues(data);
     const Class = getClass(type, data);
     try {
         ls.create(type, Class);
@@ -178,12 +200,25 @@ async function onSubmit(data) {
     }
 }
 
+export function mapSelectsToValues(data: any) {
+    const enums = getEnum();
+    enums.forEach(en => {
+        const enumKey = Object.keys(en)[0];
+        const enumValsString = Object.values(en[enumKey]).filter(v => isNaN(Number(v)));
+        const enumValsNumber = Object.values(en[enumKey]).filter(v => !isNaN(Number(v)));
+        const currentSelectValue = data[enumKey];
+        const index = enumValsString.indexOf(currentSelectValue);
+        data[enumKey] = enumValsNumber[index];
+
+    });
+}
+
 async function onEdit(data) {
     alert('in Edit...')
+    console.log('data in edit: ', data);
     const collectionName = getLocation();
+    mapSelectsToValues(data);
     try {
-        data["bodyType"] = BodyTypes[data["bodyType"]];
-        data["transmission"] = Transmissions[data["transmission"]];
         const newRecord = { ...await ls.getById(collectionName, editId), ...data };
         tableManager.replace(editId, newRecord);
         await ls.update(collectionName, editId, data);
