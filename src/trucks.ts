@@ -1,5 +1,5 @@
 import { LocalStorage } from "./Storage";
-import { Car, IVehicle, Truck } from "./vehicle";
+import { IVehicle } from "./vehicle";
 import { Editor } from "./dom/Editor";
 import { CreateTruck } from "./views/CreateTruck";
 import { EditTruck } from "./views/EditTruck"
@@ -83,14 +83,7 @@ async function listenForTableclick(e: MouseEvent) {
             const activatedRow = (e.target as HTMLElement).parentElement.parentElement as HTMLTableRowElement;
             editId = activatedRow.children[0].textContent;
             if (btnText == "Edit") {
-                isEditing = true;
-                //to be called conditionally depending on location
-                const keys = tableKeys[vehicleType];
-                const record = getTableRecord(activatedRow, keys);
-                const createForm = document.getElementById("create") as HTMLFormElement;
-                const editForm = document.getElementById("edit") as HTMLFormElement;
-                setFormValues(keys, editForm, record);
-                toggleForms(editForm, createForm);
+                editRow(activatedRow);
             } else if (btnText == "Delete") {
                 const currentCollection = getLocation();
                 try {
@@ -98,10 +91,19 @@ async function listenForTableclick(e: MouseEvent) {
                 } catch (error) {
                     alert(error);
                 }
-
             }
         }
     }
+}
+
+function editRow(activatedRow: HTMLTableRowElement) {
+    isEditing = true;
+    const keys = tableKeys[vehicleType];
+    const record = getTableRecord(activatedRow, keys);
+    const createForm = document.getElementById("create") as HTMLFormElement;
+    const editForm = document.getElementById("edit") as HTMLFormElement;
+    setFormValues(keys, editForm, record);
+    toggleForms(editForm, createForm);
 }
 
 function identify(cars: IVehicle[], id: string) {
