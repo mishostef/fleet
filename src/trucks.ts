@@ -6,6 +6,7 @@ import { EditTruck } from "./views/EditTruck"
 import { Table } from "./dom/Table";
 import { mapSelectsToValues, setFormValues, getTableRecord, getLocation, getClass, generateId } from "./utils"
 import { createTruckRow } from "./views/createTruckRow";
+import { createCarRow } from "./views/createCarRow";
 
 export const tableKeys = {
     "truck": ["make", "model", "cargoType", "capacity", "rentalPrice"],
@@ -49,7 +50,8 @@ function configEditor(keys, view, handler, id) {
 }
 
 const table = document.getElementsByTagName('table')[0];
-const tableManager = new Table(table, createTruckRow, identify);
+const createRow = getLocation().slice(0, -1) === 'car' ? createCarRow : createTruckRow;///////here last edit
+const tableManager = new Table(table, createRow, identify);//
 hidrate(tableManager);
 
 async function hidrate(tableManager: Table) {
@@ -115,7 +117,7 @@ async function onSubmit(data) {
     alert(JSON.stringify(data));
     const type = getLocation();
     mapSelectsToValues(data);
-    const Class = getClass(type, data);
+    const Class = getClass(type.slice(0, -1), data);//
     try {
         ls.create(type, Class);
     } catch (error) {
