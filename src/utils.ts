@@ -67,3 +67,9 @@ export function getTableRecord(activatedRow: HTMLTableRowElement, keys: string[]
         return a;
     }, {});
 }
+
+export function getNumberFromString(str: string) :number{
+    const r = /-?\d+/;
+    const numbers = str.match(r);
+    return Number(numbers[0]);
+}

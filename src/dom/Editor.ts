@@ -1,3 +1,4 @@
+import { getNumberFromString } from "../utils"
 export class Editor {
     private records: any[] = [];
     private rows: Map<object, HTMLTableRowElement> = new Map();
@@ -14,7 +15,10 @@ export class Editor {
     private async onSubmit(event: SubmitEvent) {
         event.preventDefault();
         const formData = new FormData(this.form);
+        const rentalPrice = formData.get("rentalPrice").toString();
+        formData.set("rentalPrice", rentalPrice);
         const data = Object.fromEntries(this.propNames.map(n => [n, formData.get(n)]));
+
         try {
             await this.callback(data);
         } catch (error) {

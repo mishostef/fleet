@@ -6,7 +6,6 @@ module.exports = {
     devtool: 'inline-source-map',
     entry: {
         main: './src/main.ts',
-        cars: './src/cars.ts',
         trucks: './src/trucks.ts',
         details: './src/details.ts'
     },
