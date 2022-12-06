@@ -117,7 +117,8 @@ async function onSubmit(data) {
     alert(JSON.stringify(data));
     const type = getLocation();
     mapSelectsToValues(data);
-    const Class = getClass(type.slice(0, -1), data);//
+    const Class = getClass(type.slice(0, -1), data);
+    tableManager.add(data);
     try {
         ls.create(type, Class);
     } catch (error) {
