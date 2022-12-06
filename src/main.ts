@@ -24,11 +24,9 @@ const tableManager = new Table(table, createOverviewRow, identify);
     });
 }())
 
-
-
 async function getRecordsByQuery() {
-    let records = selectedCollection === "all" || selectedCollection === null ?
-        getAllTableRecords() :
+    let records = selectedCollection === "all" || selectedCollection === null || selectedCollection === "0" ?
+        await getAllTableRecords() :
         (await ls.getAll(selectedCollection)).map(vehicle => {
             (vehicle as any).type = selectedCollection.slice(0, -1);
             return vehicle;

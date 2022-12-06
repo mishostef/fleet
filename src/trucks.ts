@@ -50,8 +50,8 @@ function configEditor(keys, view, handler, id) {
 }
 
 const table = document.getElementsByTagName('table')[0];
-const createRow = getLocation().slice(0, -1) === 'car' ? createCarRow : createTruckRow;///////here last edit
-const tableManager = new Table(table, createRow, identify);//
+const createRow = getLocation().slice(0, -1) === 'car' ? createCarRow : createTruckRow;
+const tableManager = new Table(table, createRow, identify);
 hidrate(tableManager);
 
 async function hidrate(tableManager: Table) {
@@ -127,8 +127,6 @@ async function onSubmit(data) {
 }
 
 async function onEdit(data) {
-    alert('in Edit...')
-    console.log('data in edit: ', data);
     const collectionName = getLocation();
     mapSelectsToValues(data);
     try {
