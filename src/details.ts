@@ -35,9 +35,8 @@ async function createDetails() {
     const rentalDiv = div({ className: "rental" },
         p({}, span({ classname: "col" }, "Rented to:  "),
             strong({}, currentVehicle["rentedTo"] ? currentVehicle["rentedTo"] : "noone")),
-
-        button({ className: "action release", onclick: endContract }, "End contract"),
-        form
+        (!!currentVehicle["rentedTo"] ? button({ className: "action release", onclick: endContract }, "End contract") : ""),
+        (!currentVehicle["rentedTo"] ? form : "")
     );
     const main = document.getElementsByTagName("main")[0];
     main.replaceChildren();

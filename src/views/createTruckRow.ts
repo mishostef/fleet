@@ -2,8 +2,7 @@ import { tr, td, button } from "../dom/dom";
 import { CargoTypes, Truck } from "../vehicle";
 
 export function createTruckRow(truck: Truck) {
-    console.log(truck.cargoType);
-    console.log(CargoTypes[truck.cargoType]);
+    console.log(Object.keys(truck));
     const row = tr({},
         td({}, truck.id),
         td({}, truck.make),
