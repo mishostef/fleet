@@ -1,8 +1,8 @@
 import { LocalStorage } from "./Storage";
-import { IVehicle, Vehicle } from "./vehicle";
+import { IVehicle } from "./vehicle";
 import { Table } from "./dom/Table";
-import { tr, td, a } from "./dom/dom";
-import { IType, overviewOptions, IStatus } from "./maintypes";
+import { createOverviewRow } from "./views/createOverviewRow";
+import { IType, overviewOptions } from "./maintypes";
 const ls = new LocalStorage();
 
 const form = document.getElementById("overviewForm") as HTMLFormElement;
@@ -12,18 +12,18 @@ const selectedCollection = isNaN(Number(type)) ? type : overviewOptions[Number(t
 const showAvailable = (urlParams.get("availableOnly"));
 
 const table = document.getElementsByTagName('table')[0];
-
 const tableManager = new Table(table, createOverviewRow, identify);
-(async function () {
+
+(async function initialize() {
     const records = await getRecordsByQuery();
     hidrate(tableManager, records);
+    form.addEventListener("submit", async function (e) {
+        let records = await getRecordsByQuery();
+        tableManager.clear();
+        hidrate(tableManager, records);
+    });
 }())
 
-form.addEventListener("submit", async function (e) {
-    let records = await getRecordsByQuery();
-    tableManager.clear();
-    hidrate(tableManager, records);
-});
 
 
 async function getRecordsByQuery() {
@@ -65,18 +65,4 @@ async function hidrate(tableManager: Table, records?: IVehicle & IType) {
 
 function identify(cars: IVehicle[], id: string) {
     return cars.find(e => e.id == id);
-}
-
-function createOverviewRow(extendedVehicle: IVehicle & IType & IStatus) {
-    const row = tr({},
-        td({}, extendedVehicle.id),
-        td({}, extendedVehicle.type),
-        td({}, extendedVehicle.make),
-        td({}, extendedVehicle.model),
-        td({}, `$${extendedVehicle.rentalPrice.toString()}/day`),
-        td({}, extendedVehicle.status),
-        td({}, a({ href: `/details.html?id=${extendedVehicle.id}` }, "Details"))
-    );
-
-    return row;
 }
