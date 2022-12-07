@@ -1,4 +1,4 @@
-import { generateId } from "./utils";
+import { generateId } from "../utils";
 export type RecordId = string;
 
 export interface Record {

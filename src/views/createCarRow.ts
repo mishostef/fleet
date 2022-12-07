@@ -1,6 +1,6 @@
 import { tr, td, button } from "../dom/dom";
-import { BodyTypes, Transmissions } from "../vehicle";
-import { Car } from "../vehicle";
+import { BodyTypes, Transmissions } from "../models/vehicle";
+import { Car } from "../models/vehicle";
 
 export function createCarRow(car: Car) {
     const row = tr({},

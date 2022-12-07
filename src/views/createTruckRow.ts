@@ -1,5 +1,5 @@
 import { tr, td, button } from "../dom/dom";
-import { CargoTypes, Truck } from "../vehicle";
+import { CargoTypes, Truck } from "../models/vehicle";
 
 export function createTruckRow(truck: Truck) {
     console.log(Object.keys(truck));

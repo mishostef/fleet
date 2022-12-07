@@ -1,5 +1,5 @@
-import { LocalStorage } from "./Storage";
-import { IVehicle } from "./vehicle";
+import { LocalStorage } from "./models/Storage";
+import { IVehicle } from "./models/vehicle";
 import { Editor } from "./dom/Editor";
 import { CreateTruck } from "./views/CreateTruck";
 import { EditTruck } from "./views/EditTruck"

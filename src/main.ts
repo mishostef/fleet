@@ -1,8 +1,8 @@
-import { LocalStorage } from "./Storage";
-import { IVehicle } from "./vehicle";
+import { LocalStorage } from "./models/Storage";
+import { IVehicle } from "./models/vehicle";
 import { Table } from "./dom/Table";
 import { createOverviewRow } from "./views/createOverviewRow";
-import { IType, overviewOptions } from "./maintypes";
+import { IType, overviewOptions } from "./models/maintypes";
 const ls = new LocalStorage();
 
 const form = document.getElementById("overviewForm") as HTMLFormElement;
