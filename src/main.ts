@@ -7,11 +7,11 @@ const ls = new LocalStorage();
 
 const form = document.getElementById("overviewForm") as HTMLFormElement;
 const urlParams = new URLSearchParams(window.location.search);
-const type = urlParams.get('type');
+const type = urlParams.get("type");
 const selectedCollection = isNaN(Number(type)) ? type : overviewOptions[Number(type)];
 const showAvailable = (urlParams.get("availableOnly"));
 
-const table = document.getElementsByTagName('table')[0];
+const table = document.getElementsByTagName("table")[0];
 const tableManager = new Table(table, createOverviewRow, identify);
 
 (async function initialize() {

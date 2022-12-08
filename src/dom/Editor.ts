@@ -1,12 +1,9 @@
-import { getNumberFromString } from "../utils"
 export class Editor {
-    private records: any[] = [];
-    private rows: Map<object, HTMLTableRowElement> = new Map();
     constructor(private form: HTMLFormElement,
         private callback: (data: object) => any,
         private propNames: string[], originator?: HTMLButtonElement) {
-        this.form.addEventListener('submit', this.onSubmit.bind(this));
-        this.form.addEventListener('reset', (e) => {
+        this.form.addEventListener("submit", this.onSubmit.bind(this));
+        this.form.addEventListener("reset", (e) => {
             this.form.style.display = "none";
             if (originator) originator.style.display = "block";
         });

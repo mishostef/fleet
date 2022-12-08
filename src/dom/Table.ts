@@ -1,7 +1,7 @@
 export class Table {
     private records: any[] = [];
     private rows: Map<object, HTMLTableRowElement> = new Map();
-    //public activatedRow: HTMLTableRowElement = null;
+
     constructor(
         public element: HTMLTableElement,
         private createRow: (record: any) => HTMLTableRowElement,
@@ -13,7 +13,7 @@ export class Table {
             this.records = records;
         }
         this.records.forEach(this.add.bind(this));
-        this.element.addEventListener('click', (e) => {
+        this.element.addEventListener("click", (e) => {
             if (e.target instanceof HTMLButtonElement) {
                 if (e.target.textContent === "Delete") {
                     const activatedRow = e.target.parentElement.parentElement as HTMLTableRowElement;
@@ -39,11 +39,11 @@ export class Table {
         this.records = [];
     }
     get(id: any): any {
-        if (typeof this.identify == 'function') {
+        if (typeof this.identify == "function") {
             const result = this.identify(this.records, id);
             return result;
         }
-        throw new ReferenceError('Indetity function not specified');
+        throw new ReferenceError("Indetity function not specified");
     }
 
     getRow(id: any): HTMLTableRowElement {
@@ -54,7 +54,7 @@ export class Table {
     replace(id: any, newRecord: any) {
         const record = this.get(id);
         //const index = this.records.findIndex(r => r == record);
-        const index = [...this.rows.keys()].findIndex(x => x['id'] === id);
+        const index = [...this.rows.keys()].findIndex(x => x["id"] === id);
         // Update row in DOM and collection
         const f = this.createRow.bind(this);
         const newRow = f(newRecord);

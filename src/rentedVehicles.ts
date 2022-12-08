@@ -4,14 +4,9 @@ import { Editor } from "./dom/Editor";
 import { CreateTruck } from "./views/CreateVehicle";
 import { EditTruck } from "./views/EditVehicle"
 import { Table } from "./dom/Table";
-import { mapSelectsToValues, setFormValues, getTableRecord, getLocation, getClass, generateId } from "./utils"
+import { mapSelectsToValues, setFormValues, getTableRecord, getLocation, getClass, generateId, tableKeys } from "./utils"
 import { createVehicleRow } from "./views/createVehicleRow";
 import { getValidators } from "./models/validators";
-
-export const tableKeys = {
-    "truck": ["make", "model", "cargoType", "capacity", "rentalPrice"],
-    "car": ["make", "model", "bodyType", "numberOfSeats", "transmission", "rentalPrice"]
-};
 
 let editId = null;
 const ls = new LocalStorage();
@@ -20,15 +15,15 @@ const vehicleType = getLocation().slice(0, -1);
 const actionButton = document.getElementsByClassName("action new")[0] as HTMLButtonElement;
 initialize();
 
-actionButton.addEventListener('click', function (e) {
+actionButton.addEventListener("click", function (e) {
     actionButtonHandler(e);
 });
 
-document.addEventListener('click', (e) => {
+document.addEventListener("click", (e) => {
     listenForTableclick(e);
 });
 
-const table = document.getElementsByTagName('table')[0];
+const table = document.getElementsByTagName("table")[0];
 const tableManager = new Table(table, createVehicleRow, identify);
 hidrate(tableManager);
 
@@ -45,7 +40,7 @@ function initialize() {
     const vehicleKeys = Object.keys(Class).filter(key => key !== "id" && key != "rentedTo");
     const e1 = configEditor(vehicleKeys, CreateTruck, onSubmit, "create");
     const e2 = configEditor(vehicleKeys, EditTruck, onEdit, "edit");
-    [...(document.querySelectorAll('.editor form') as NodeListOf<HTMLElement>)].forEach(el => el.style.display = "none");
+    [...(document.querySelectorAll(".editor form") as NodeListOf<HTMLElement>)].forEach(el => el.style.display = "none");
 }
 
 function configEditor(keys, view, handler, id) {
@@ -65,7 +60,7 @@ async function hidrate(tableManager: Table) {
 
 function getEditor(keys: string[], view, index) {
     const html = view(keys);
-    const newEditor = (document.querySelectorAll('.editor')[index] as HTMLElement);
+    const newEditor = (document.querySelectorAll(".editor")[index] as HTMLElement);
     newEditor.style.display = "block";
     return { newEditor, html };
 }
@@ -124,7 +119,6 @@ async function onSubmit(data) {
             }
         })
         data.id = generateId();
-        alert(JSON.stringify(data));
         const type = getLocation();
         mapSelectsToValues(data);
         validators

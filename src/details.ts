@@ -3,7 +3,7 @@ import { LocalStorage } from "./models/Storage";
 import { enumMap } from "./utils";
 
 const urlParams = new URLSearchParams(window.location.search);
-const id = urlParams.get('id');
+const id = urlParams.get("id");
 const ls = new LocalStorage();
 createDetails();
 
@@ -17,13 +17,12 @@ function createDetailsForm() {
 }
 async function createDetails() {
     const currentVehicle = await getCurrentVehicle();
-    alert(JSON.stringify(currentVehicle));
     const props = Object.entries(currentVehicle).map(kv => {
         let [k, v] = kv;
         if (k in Object.keys(enumMap)) {
             v = enumMap[k];
         }
-        return p({}, span({ className: "col" }, k), strong({ className: "col" }, v === null ? '' : v.toString()))
+        return p({}, span({ className: "col" }, k), strong({ className: "col" }, v === null ? "" : v.toString()))
     });
     const detailsDiv = div({ className: "details" }, ...props);
     const form = createDetailsForm();

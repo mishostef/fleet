@@ -19,7 +19,7 @@ export function CreateTruck(keys) {
             }
         }
 
-        const currentSpan = span({}, key.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase());
+        const currentSpan = span({}, key.replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase());
         const currentInput = input({ type: "text", name: key });
         return label({}, currentSpan, currentInput);
     });

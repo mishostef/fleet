@@ -1,21 +1,22 @@
 import { CargoTypes, BodyTypes, Transmissions, Car, Truck } from "./models/vehicle";
 
+export const tableKeys = {
+    "truck": ["make", "model", "cargoType", "capacity", "rentalPrice"],
+    "car": ["make", "model", "bodyType", "numberOfSeats", "transmission", "rentalPrice"]
+};
+export const enumMap = {
+    cargoType: CargoTypes,
+    bodyType: BodyTypes,
+    transmission: Transmissions
+}
 export function generateId(): string {
     const func = () => Math.floor(Math.random() * 16777215).toString(16);
     return `${func()}-${func()}`
 }
 
 export function getLocation(): string {
-    return window.location.pathname.replace('/', '').split('.')[0];
+    return window.location.pathname.replace("/", "").split(".")[0];
 }
-
-
-export const enumMap = {
-    cargoType: CargoTypes,
-    bodyType: BodyTypes,
-    transmission: Transmissions
-}
-
 export function getEnum(): any {
     const type = getLocation().slice(0, -1);//truck
     const kvp = {
