@@ -5,7 +5,7 @@ export class Editor {
         this.form.addEventListener("submit", this.onSubmit.bind(this));
         this.form.addEventListener("reset", (e) => {
             this.form.style.display = "none";
-            if (originator) originator.style.display = "block";
+            if (originator) { originator.style.display = "block"; }
         });
     }
 
