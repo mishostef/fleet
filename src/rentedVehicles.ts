@@ -5,8 +5,7 @@ import { CreateTruck } from "./views/CreateVehicle";
 import { EditTruck } from "./views/EditVehicle"
 import { Table } from "./dom/Table";
 import { mapSelectsToValues, setFormValues, getTableRecord, getLocation, getClass, generateId } from "./utils"
-import { createTruckRow } from "./views/createTruckRow";
-import { createCarRow } from "./views/createCarRow";
+import { createVehicleRow } from "./views/createVehicleRow";
 import { getValidators } from "./models/validators";
 
 export const tableKeys = {
@@ -30,8 +29,7 @@ document.addEventListener('click', (e) => {
 });
 
 const table = document.getElementsByTagName('table')[0];
-const createRow = getLocation().slice(0, -1) === 'car' ? createCarRow : createTruckRow;
-const tableManager = new Table(table, createRow, identify);
+const tableManager = new Table(table, createVehicleRow, identify);
 hidrate(tableManager);
 
 function actionButtonHandler(e: MouseEvent) {

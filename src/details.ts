@@ -1,12 +1,7 @@
 import { span, p, div, form, label, strong, input, button } from "./dom/dom";
 import { LocalStorage } from "./models/Storage";
-import { CargoTypes, BodyTypes, Transmissions } from "./models/vehicle";
+import { enumMap } from "./utils";
 
-const enumMap = {
-    cargoType: CargoTypes,
-    bodyType: BodyTypes,
-    transmission: Transmissions
-}
 const urlParams = new URLSearchParams(window.location.search);
 const id = urlParams.get('id');
 const ls = new LocalStorage();
@@ -52,7 +47,6 @@ async function getCurrentVehicle() {
 }
 
 async function endContract() {
-    alert("end contract");
     const data = await getCurrentVehicle();
     const collectionName = `${data.type}s`;
     delete data.type;

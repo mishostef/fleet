@@ -9,6 +9,13 @@ export function getLocation(): string {
     return window.location.pathname.replace('/', '').split('.')[0];
 }
 
+
+export const enumMap = {
+    cargoType: CargoTypes,
+    bodyType: BodyTypes,
+    transmission: Transmissions
+}
+
 export function getEnum(): any {
     const type = getLocation().slice(0, -1);//truck
     const kvp = {
@@ -68,7 +75,7 @@ export function getTableRecord(activatedRow: HTMLTableRowElement, keys: string[]
     }, {});
 }
 
-export function getNumberFromString(str: string) :number{
+export function getNumberFromString(str: string): number {
     const r = /-?\d+/;
     const numbers = str.match(r);
     return Number(numbers[0]);
