@@ -7,6 +7,7 @@ import { Table } from "./dom/Table";
 import { mapSelectsToValues, setFormValues, getTableRecord, getLocation, getClass, generateId } from "./utils"
 import { createTruckRow } from "./views/createTruckRow";
 import { createCarRow } from "./views/createCarRow";
+import { getValidators } from "./models/validators";
 
 export const tableKeys = {
     "truck": ["make", "model", "cargoType", "capacity", "rentalPrice"],
@@ -21,16 +22,25 @@ const actionButton = document.getElementsByClassName("action new")[0] as HTMLBut
 initialize();
 
 actionButton.addEventListener('click', function (e) {
-    isEditing = false;
-    const createForm = document.getElementById("create") as HTMLFormElement;
-    (e.target as HTMLButtonElement).style.display = "none";
-    const editForm = document.getElementById("edit") as HTMLFormElement;
-    toggleForms(editForm, createForm);
+    actionButtonHandler(e);
 });
 
 document.addEventListener('click', (e) => {
     listenForTableclick(e);
 });
+
+const table = document.getElementsByTagName('table')[0];
+const createRow = getLocation().slice(0, -1) === 'car' ? createCarRow : createTruckRow;
+const tableManager = new Table(table, createRow, identify);
+hidrate(tableManager);
+
+function actionButtonHandler(e: MouseEvent) {
+    isEditing = false;
+    const createForm = document.getElementById("create") as HTMLFormElement;
+    (e.target as HTMLButtonElement).style.display = "none";
+    const editForm = document.getElementById("edit") as HTMLFormElement;
+    toggleForms(editForm, createForm);
+}
 
 function initialize() {
     const Class = getClass(vehicleType, { id: "a", model: "b", make: "c" });
@@ -48,11 +58,6 @@ function configEditor(keys, view, handler, id) {
     editForm.style.background = "#" + Math.floor(Math.random() * 16777215).toString(16);
     return new Editor(editForm, handler, keys, actionButton);
 }
-
-const table = document.getElementsByTagName('table')[0];
-const createRow = getLocation().slice(0, -1) === 'car' ? createCarRow : createTruckRow;
-const tableManager = new Table(table, createRow, identify);
-hidrate(tableManager);
 
 async function hidrate(tableManager: Table) {
     const currentType = getLocation();
@@ -113,13 +118,20 @@ function identify(cars: IVehicle[], id: string) {
 }
 
 async function onSubmit(data) {
-    data.id = generateId();
-    alert(JSON.stringify(data));
-    const type = getLocation();
-    mapSelectsToValues(data);
-    const Class = getClass(type.slice(0, -1), data);
-    tableManager.add(data);
     try {
+        const validators: { [k: string]: (v: string) => void } = getValidators();
+        Object.keys(data).forEach(k => {
+            if (validators[k]) {
+                validators[k](data[k]);
+            }
+        })
+        data.id = generateId();
+        alert(JSON.stringify(data));
+        const type = getLocation();
+        mapSelectsToValues(data);
+        validators
+        const Class = getClass(type.slice(0, -1), data);
+        tableManager.add(data);
         ls.create(type, Class);
     } catch (error) {
         alert(error);
